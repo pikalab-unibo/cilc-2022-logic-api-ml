@@ -1,0 +1,43 @@
+@startuml
+interface Atom
+interface       EntityRef {
+`object` : Any
+}
+interface  NetworkRef {
+`object` : Network
+}
+interface       DatasetRef {
+`object` : Dataset
+}
+interface       SchemaRef {
+`object` : Schema
+}
+interface       TransformProcessRef {
+`object` : TransformProcess
+}
+interface       LayerRef {
+`object` : Layer
+} 
+interface       OutputLayerRef{
+`object` : OutputLayer
+} 
+interface       OpenLayerRef{
+`object` : OpenLayer
+}
+interface       InputLayerRef {
+`object` : InputLayer
+}
+interface       DenseLayerRef {
+`object` : DenseLayer
+}
+Atom <|-- EntityRef
+EntityRef <|--  SchemaRef
+EntityRef <|--  NetworkRef
+EntityRef <|--  DatasetRef
+EntityRef <|--  TransformProcessRef
+EntityRef <|--  LayerRef
+LayerRef <|-- OutputLayerRef
+LayerRef <|-- OpenLayerRef
+OpenLayerRef <|-- InputLayerRef
+OpenLayerRef <|-- DenseLayerRef
+@enduml

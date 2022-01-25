@@ -1,0 +1,146 @@
+@startuml
+' + functional
+' # non-deterministic (a.k.a. backtrackable)
+' ~ other
+
+left to right direction
+
+entity Dataset {
+    -- Creation --
+    + ""read_dataset(+**Path**: //atom//, +**SourceType**: //atom//, -**Dataset**: //ref//)""
+    + ""theory_to_dataset(+**Functor**: //atom//, -**Dataset**: //ref//)""
+    -- Manipulation --
+    # ""fold(+**Dataset**: //ref//, +**K**: //int//, -**Train**: //ref//, -**Test**: //ref//)""
+    + ""write_dataset(+**Dataset**: //ref//, -**Path**: //atom//)""
+    # ""theory_from_dataset(+**Schema**: //ref//, +**Dataset**: //ref//)""
+    # ""row(+**Dataset**: //ref//, ?**Index**: //integer//, -**Record**: //compound//)""
+    # ""column(+**Dataset**: //ref//, ?**Key**: //integer|atom//, -**Values**: //list//)""
+    # ""cell(+**Dataset**: //ref//, ?**Index**: //integer//, ?**Key**: //integer|atom//, -**Values**: //list//)""
+    + ""random_split(+**Dataset**: //ref//, +**Ratio**: //real//, -**Train**: //ref//, -**Test**: //ref//)""
+    -- Representation --
+    ""〈functor〉(〈X11〉, ..., 〈X1j〉, ..., 〈X1n〉).""
+    ""...""
+    ""〈functor〉(〈Xi1〉, ..., 〈Xij〉, ..., 〈Xin〉).""
+    ""...""
+    ""〈functor〉(〈Xm1〉, ..., 〈Xmj〉, ..., 〈Xmn〉).""
+}
+
+entity "Source Type" as ST {
+  -- Creation --
+    + ""source_type(〈T〉)""
+        ""〈T〉∈ {csv, rdbm, ...}""
+}
+
+Dataset "1" o-- "0-1" ST
+
+entity Schema {
+    -- Creation --
+    + ""theory_to_schema(-**Schema**: //ref//)""
+    -- Manipulation --
+    + ""schema(?**Schema**: //ref//, ?**Name**: //atom//, ?**Attributes**: //list//, ?**Targets**: //list//)""
+    -- Representation --
+    ""attribute(1, 〈N1〉, 〈T1〉).""
+    ...
+    ""attribute(i, 〈Ni〉, 〈Ti〉).""
+    ...
+    ""attribute(n, 〈Nn〉, 〈Tn〉).""
+    ""schema_name(〈functor〉).""
+    ""schema_target(〈Nj〉)"".
+}
+
+Dataset "1" -- "1" Schema
+
+entity Transformation {
+    -- Creation --
+    + ""schema_transformation(?**Schema**: //ref//, ?**Transformation**: //ref//)""
+    + ""〈name〉(+**Tin**: //ref//, 〈Arg1〉, ...,〈ArgN〉, -**Tout**:: //ref//)""
+    -- Manipulation --
+    + ""fit(+**Tin**: //ref//, +**Dataset**: //ref//, -**Tout**: //ref//)""
+    + ""transform(+**Din**: //compound|ref//, +**Transformation**: //ref//, -**Dout**: //compound|ref//)""
+}
+
+entity Normalization {
+  + ""normalize(+**Tin**: //ref//, +**Attributes**: //ref//, -**Tout**: //ref//)""
+}
+
+Transformation <|-- Normalization
+
+entity "One Hot Encoding" as OHE {
+  + ""one_hot_encode(+**Tin**: //ref//, +**Attributes**: //ref//, -**Tout**: //ref//)""
+}
+
+Transformation <|-- OHE
+
+entity "Attributes Delete" as AD {
+  + ""delete_attributes(+**Tin**: //ref//, +**Attributes**: //ref//, -**Tout**: //ref//)""
+}
+
+Transformation <|-- AD
+
+entity Predictor {
+    -- Creation --
+    + ""〈predictor〉(〈H1〉, 〈H2〉, ..., -**Predictor**: //ref//)""
+    -- Manipulation --
+    + ""train(+**Pin**: //ref//, +**Dataset**: //ref//, +**Params**: //list//, -**Pout**: //ref//)""
+    + ""predict(+**Pin**: //ref//, +**Data**: //compund|ref//, -**Prediction**: //compund|ref//)""
+    + ""classify(+**Prediction**: //compund|ref//, +**Strategy**: //compound//, +**Classes**: //list//, -**Classification**: //compund|ref//)""
+}
+
+entity "Classification Strategy" as CS {
+  -- Creation --
+  + ""classification(〈S〉)""
+    ""〈S〉∈ {max, threshold(〈T〉), ...}""
+}
+
+Predictor "1" -- "N" CS
+
+entity "Neural Network" as NN {
+    -- Creation --
+    + ""network(+**Layer**: //ref//, -**Network**: //ref//)""
+}
+
+Predictor <|-- NN
+
+entity Layer {
+    -- Creation --
+    + ""input_layer(+**Size**: //int//, -**Layer**: //ref//)""
+    -- Manipulation --
+    + ""dense_layer(+**Lin**: //ref//, +**Size**: //int//, +**Activatin**: //atom//, -**Lout**: //ref//)""
+    + ""output_layer(+**Lin**: //ref//, +**Size**: //int//, +**Activatin**: //atom//, -**Lout**: //ref//)""
+}
+
+NN "1" *-- "N" Layer
+
+entity Activation {
+    -- Creation --
+    + ""activation(〈A〉)""
+        ""〈A〉∈ {identity, relu, sigmoid, tanh, ...}""
+}
+
+entity Loss {
+    -- Creation --
+    + ""loss(〈L〉)""
+        ""〈L〉∈ {mse, mae, cross_entropy, ...}""
+}
+
+entity Parameter {
+    -- Creation --
+    + ""〈param〉(〈Value〉)""
+}
+
+entity "Max Epochs" as ME {
+    -- Creation --
+    + ""max_epochs(+**N**: //int//)""
+}
+
+entity "Batch Size" as BS {
+    -- Creation --
+    + ""batch_size(+**N**: //int//)""
+}
+
+Parameter <|-- ME
+Parameter <|-- BS
+Parameter <|-- Loss
+Predictor "1" *-- "N" Parameter
+Layer "1" *-- "N" Activation
+@enduml

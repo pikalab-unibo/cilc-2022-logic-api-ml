@@ -1,0 +1,81 @@
+% common utilities
+%\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amsthm}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage[inline]{enumitem}
+\usepackage{rotating}
+\usepackage{adjustbox}
+\usepackage{makecell}
+
+%\newenvironment{abstract}{\chapter*{\centering\abstractname}\addcontentsline{toc}{chapter}{\abstractname}}{}
+
+\newenvironment{acknowledgements}{\chapter*{\acknowledgementsname}}{}
+
+\newenvironment{dedication}{\chapter*{}\begin{flushright}\itshape}{\normalfont\end{flushright}}
+
+\newcommand{\chapterWithoutNumber}[1]{\chapter*{#1}\addcontentsline{toc}{chapter}{#1}}
+
+% \usepackage[disable]{todonotes}
+\usepackage{todonotes}
+\newcommand{\gcsidenote}[1]{\todo[size=\tiny,color=green]{\textbf{GC:} #1}}
+\newcommand{\gcnote}[1]{\todo[size=\scriptsize,color=green,inline]{\textbf{Giovanni Ciatto:} #1}}
+\newcommand{\mcsidenote}[1]{\todo[size=\tiny,color=red]{\textbf{MC:} #1}}
+\newcommand{\mcnote}[1]{\todo[size=\scriptsize,color=red,inline]{\textbf{Matteo Castigliò:} #1}}
+\newcommand{\rcsidenote}[1]{\todo[size=\tiny,color=cyan]{\textbf{RC:} #1}}
+\newcommand{\rcnote}[1]{\todo[size=\scriptsize,color=cyan,inline]{\textbf{Roberta Calegari:} #1}}
+
+%-----------------------------------------------------
+% LISTING CONFIGURATIONS
+%-----------------------------------------------------
+
+%\crefname{lstlisting}{listing}{listing}
+%\Crefname{lstlisting}{Listing}{\lstlistingname}
+
+\lstset{
+	showstringspaces=false,
+	basicstyle=\scriptsize\ttfamily,
+	commentstyle={\color{olive}},
+	identifierstyle=\color{black},
+	ndkeywordstyle={\color{blue}},
+	stringstyle={\color{magenta}},
+	emphstyle={},
+	keywordstyle={\color{blue}},
+	breaklines=true,
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	numbersep=10pt,
+	tabsize=2,
+	extendedchars=true,
+	frame=trBL,
+	frameround=fttt,
+}
+
+\lstdefinelanguage{Kotlin}{
+	comment=[l]{//},
+	emph={delegate, filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
+	keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, override, package, private, public, return, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]",
+	morestring=[s]{"""*}{*"""},
+	ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String, Unit, it},
+	sensitive=true
+}
+
+\newcommand{\twopkt}{\textsc{2P-Kt}}
+\newcommand{\deeplearningforj}{DeepLearning4J}
+\newcommand{\dlfj}{DL4J}
+\newenvironment{inlinelist}{\begin{enumerate*}[label=\emph{(\roman{*})}]}{\end{enumerate*}}
+\newcommand{\mllib}{ML-Lib}
+
+\newcommand{\kt}[1]{\texttt{#1}}
+\newcommand{\pl}[1]{\texttt{#1}}
+\newcommand{\pli}[1]{\pl{\textit{#1}}}
+\newcommand{\module}[1]{\texttt{:#1}}
+

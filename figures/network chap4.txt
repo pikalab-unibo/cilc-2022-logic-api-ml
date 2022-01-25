@@ -1,0 +1,28 @@
+@startuml
+interface Layer
+interface InputLayer
+interface  OpenLayer
+interface ConnectedLayer
+interface DenseLayer
+interface OutputLayer
+interface Network
+Layer : size : Int 
+InputLayer : size : Int
+OpenLayer : size : Int 
+DenseLayer : size : Int 
+OutputLayer : size : Int 
+ConnectedLayer : activation :  Activation
+ConnectedLayer : previous : OpenLayer
+DenseLayer : previous : OpenLayer
+DenseLayer : activation :  Activation
+OutputLayer : previous : OpenLayer
+OutputLayer : activation :  Activation
+OutputLayer : loss :  Loss
+Layer  <|--- OpenLayer
+Layer  <|--- ConnectedLayer
+ConnectedLayer <|-- DenseLayer
+OpenLayer<|-- DenseLayer
+ConnectedLayer <|-- OutputLayer 
+OpenLayer <|-- InputLayer
+Network "output" -->  OutputLayer
+@enduml

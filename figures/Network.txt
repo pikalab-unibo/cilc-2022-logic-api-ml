@@ -1,0 +1,16 @@
+@startuml
+interface Network{
+train(dataset: Dataset, schema: Schema, target: String, iterations: Int): Network
+predictDataset(data: Dataset): DataSet
+classify(input: Struct, classList: List<String>): String
+accuracy(dataset: DataSet, schema: Schema, target: String): Double
+predict(input: Struct): List<Double>
+mse(dataset: Dataset, schema: Schema, target: String): Double
+} 
+Entity Companion {
+of(output : OutputLayer) : Network
+}
+        
+interface Network
+Network --> Companion
+@enduml

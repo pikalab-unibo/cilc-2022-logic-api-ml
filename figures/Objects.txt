@@ -1,0 +1,28 @@
+@startuml
+interface Network
+interface InputLayer
+interface InputLayer
+interface DenseLayer
+interface OutputLayer
+interface Network
+interface Dataset
+interface TransformProcess
+interface Schema
+interface NetworkObject
+interface InputLayerObject
+interface InputLayerObject
+interface DenseLayerObject
+interface OutputLayerObject
+interface NetworkObject
+interface DatasetObject
+interface TransformProcessObject
+interface SchemaObject
+
+Network --> NetworkObject :"`object`"
+InputLayer --> InputLayerObject :"`object`"
+DenseLayer --> DenseLayerObject : "`object`"
+OutputLayer -> OutputLayerObject : "`object`"
+Dataset --> DatasetObject : "`object`"
+TransformProcess -->TransformProcessObject : "`object`"
+Schema --> SchemaObject : "`object`"
+@enduml

@@ -1,0 +1,47 @@
+\begin{table}
+    \begin{adjustbox}{width=\textwidth,center}
+        \begin{tabular}{c||c|c|c|c}
+            \textbf{Project} & \textbf{Developer / Funder} & \textbf{Maturity} & \textbf{Development Status} & \textbf{Documentation}
+            \\\hline\hline
+            \dlfj{} & Konduit/Eclipse Fundation & Beta & Actively Developed & Excellent
+            \\\hline
+            Smile & Haifeng Li & Stable & Developed & Excellent
+            \\\hline
+            Neuroph & Zorac Severac & Stable & Maintained & Acceptable
+            \\\hline
+            TF4J & Google Brain Team & WIP & Developed & Excellent
+            \\\hline
+            DJL & Amazon Web Services & Alpha & Actively Developed & Good
+            \\\hline
+            H20 & H20.ai & Stable & Developed & Good
+            \\\hline
+            Weka & Waikato University & Stable & Developed & Excellent
+        \end{tabular}
+    \end{adjustbox}
+    \caption{Recap of the analysed technologies and their features}
+    \label{tab:tech-features}
+\end{table}
+
+\begin{table}
+    \begin{adjustbox}{width=\textwidth,center}
+        \begin{tabular}{ c||c|c|c|c|c }
+            \textbf{Project} & \makecell{\textbf{Neural} \\ \textbf{networks}} & \makecell{\textbf{Linear} \\ \textbf{Algebra}} & \makecell{\textbf{Dataset} \\ \textbf{pre-processing}} & \makecell{\textbf{Other sorts} \\ \textbf{of predictors}} & \makecell{\textbf{Differential} \\ \textbf{engine}}
+            \\\hline\hline
+            \dlfj & Yes & Yes & Yes & No & Yes
+            \\\hline
+            Smile & No & Yes & Yes & Yes & No
+            \\\hline
+            Neuroph & Yes & No & No & No & No
+            \\\hline
+            TF4J & Yes & No & No & No & Yes
+            \\\hline
+            DJL & Yes & Yes & No & No & Yes
+            \\\hline
+            H20 & Yes & Yes & Yes & Yes & Unknown
+            \\\hline
+            Weka & Yes & Yes & Yes & Yes & via \dlfj
+        \end{tabular}
+    \end{adjustbox}
+    \caption{Recap of the analysed technologies and the functionalities they support}
+    \label{tab:tech-functionalities}
+\end{table}

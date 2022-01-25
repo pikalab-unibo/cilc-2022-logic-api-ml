@@ -1,0 +1,18 @@
+@startuml
+interface TransformProcess {
+initial : Schema
+final : Schema
+fitted : Boolean
+fit() : TransformProcess
+trasform(dataset : Dataset) : Dataset
+trasform(input : Struct) : Struct
+}
+
+Entity Companion {
+normalize(tp : TransformProcess) : TransformProcess
+deleteColumns(tp : TransformProcess) : TransformProcess
+OneHotEncoding(tp : TransformProcess) : TransformProcess 
+of(schema : Schema)
+}
+TransformProcess --> Companion
+@enduml

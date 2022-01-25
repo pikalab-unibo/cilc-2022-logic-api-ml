@@ -1,0 +1,5 @@
+@startuml
+interface NetworkRef
+interface Network
+NetworkRef --> Network : `object`
+@enduml

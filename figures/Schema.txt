@@ -1,0 +1,19 @@
+@startuml
+interface Attribute 
+interface Schema {
+name : String
+targets : List<String>
+}
+interface CategoricalAttribute 
+interface StringAttribute 
+interface IntegerAttribute 
+interface DoubleAttribute
+Schema *-- "N"  Attribute : "attributes"
+Attribute : index : Int
+Attribute : name : String
+Attribute <|-- CategoricalAttribute 
+Attribute <|-- StringAttribute 
+Attribute <|-- IntegerAttribute 
+Attribute <|-- DoubleAttribute 
+CategoricalAttribute : categories : List<String>
+@enduml

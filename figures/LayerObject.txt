@@ -1,0 +1,30 @@
+@startuml
+Interface Layer
+Interface InputLayer
+Interface  OpenLayer
+Interface ConnectedLayer
+interface OutputLayer
+interface DenseLayer
+Enum Activation{
+ACTIVATION.RELU
+ACTIVATION.TANH
+ACTIVATION.SIGMOID
+...
+}
+Enum Loss {
+LOSS.MSE
+LOSS.MAE
+LOSS.CROSS_ENTROPY
+...
+}
+Layer : size : Int
+ConnectedLayer : previousLayer : OpenLayer
+ConnectedLayer --> Activation : activation 
+OutputLayer -->  Loss : loss
+Layer  <|--- OpenLayer 
+Layer  <|--- ConnectedLayer
+ConnectedLayer <|-- DenseLayer
+OpenLayer<|-- DenseLayer
+ConnectedLayer <|-- OutputLayer 
+OpenLayer <|-- InputLayer
+@enduml

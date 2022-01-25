@@ -1,0 +1,32 @@
+@startuml
+interface SchemaOperation {
+getTransformedSchema(schema : Schema) : Schema
+operation(builder : DL4JBuilder, attributes : List<String>, da : DataAnalysis)
+}
+
+class TransformProcessImpl {
+- needFitting : Boolean
+- trainingTransformer : DL4JTransformProcess
+- predictionTransformer : DL4JTransformProcess
+- dataAnalysis: DataAnalysis
++ initial : Schema
++ final : Schema
+- addOperation(op : SchemaOperation) : TransformProcess
++ fit() : TransformProcess
++ trasform(dataset : Dataset) : Dataset
++ trasform(input : Struct) : Struct
+}
+
+Entity Companion {
++ normalize(tp : TransformProcess) : TransformProcess
++ deleteColumns(tp : TransformProcess) : TransformProcess
++ OneHotEncoding(tp : TransformProcess) : TransformProcess 
++ of(schema : Schema)
+}
+
+SchemaOperation <|-- Normalize
+SchemaOperation <|-- OneHotEncoding
+SchemaOperation <|-- DeleteColumns
+TransformProcessImpl --> Companion
+TransformProcessImpl -->"N" SchemaOperation
+@enduml
