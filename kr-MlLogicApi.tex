@@ -11,42 +11,30 @@
 \usepackage{kr}
 \usepackage{kr-MlLogicApi}
 
-% Use the postscript times font!
-\usepackage{times}
-\usepackage{soul}
-\usepackage{url}
-\usepackage[hidelinks]{hyperref}
-\usepackage[utf8]{inputenc}
-\usepackage[small]{caption}
-\usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{booktabs}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\urlstyle{same}
-
-\newtheorem{example}{Example}
-\newtheorem{theorem}{Theorem}
-
 \pdfinfo{
 /TemplateVersion (KR.2022.0)
 }
 
-\title{Towards a logic library for ML: design and prototyping in \twopkt{}}
+\title{Towards a Logic Programming library for Machine Learning: API design and prototyping}
 
 % Multiple author syntax
 \author{%
-First Author$^1$\and
-Second Author$^2$\and
-Third Author$^{2,3}$ \\
+Giovanni Ciatto$^1$
+\and
+Matteo Castigliò$^2$
+\and
+Roberta Calegari$^{3}$
+\\
 \affiliations
-$^1$First Affiliation\\
-$^2$Second Affiliation\\
-$^3$Third Affiliation\\
-\emails
-\{first, second\}@example.com,
-third@other.example.com,
+$^1$Departement of Computer Science and Engineering (DISI) %, Alma Mater Studiorum---Università di Bologna
+\\
+$^3$Alma Mater Research Institute for Human Centered AI (AlmaAI)
+\\
+$^{1,3}$Alma Mater Studiorum---Università di Bologna
+\\
+\emails\ttfamily
+$^{1,3}$\{giovanni.ciatto, roberta.calegari\}@unibo.it,
+$^{2}$matteo.castigliò@studio.unibo.it
 }
 
 \begin{document}
@@ -68,9 +56,13 @@ third@other.example.com,
 %%
 %The two approaches are thus complementary.
 
-In this paper we address the problem of hybridising logic and neural approaches to artificial intelligence, following the purpose of creating flexible and data-driven systems, which are simultaneously comprehensible and capable of automated learning.
+In this paper we address the problem of hybridising logic and sub-symbolic approaches to artificial intelligence, following the purpose of creating flexible and data-driven systems, which are simultaneously comprehensible and capable of automated learning.
 %
-In particular, we propose a logic API for supervised machine learning, enabling logic programmers to exploit neural networks -- among the others -- in their programs.
+In particular, in this paper we propose a logic API for supervised machine learning, enabling logic programmers to exploit neural networks -- among the others -- in their programs.
+%
+Accordingly, we discuss the design and architecture of a library reifying our API for the Prolog language, on top of the \twopkt{} logic ecosystem.
+%
+Finally, we discuss a number of snippets aimed at exemplifying the major benefits of our approach when it comes to design hybrid systems.
 
 \end{abstract}
 
@@ -124,20 +116,22 @@ Dually, by supporting the training of neural networks from logic data, our API c
 
 %Accordingly, the reminder of this paper is organised as follows.
 %%
-%In \ref{sec:requirements}, we describe and analyse the supervised ML domain, with the purpose of identifying which functionalities our logic API for ML should support, and how exactly they are expected to work.
+%In \cref{sec:requirements}, we describe and analyse the supervised ML domain, with the purpose of identifying which functionalities our logic API for ML should support, and how exactly they are expected to work.
 %%
-%Then, in \ref{sec:project}, we delve into the design of the \mllib{} discussing and motivating conventions, syntactic choices, and architectural decisions.
+%Then, in \cref{sec:project}, we delve into the design of the \mllib{} discussing and motivating conventions, syntactic choices, and architectural decisions.
 %%
-%In \ref{sec:tech}, we then discuss a number of technology- and platform-related aspects arising when prototyping the \mllib{}.
+%In \cref{sec:tech}, we then discuss a number of technology- and platform-related aspects arising when prototyping the \mllib{}.
 %%
 %There, we motivate technological commitments such as \twopkt{} and \deeplearningforj{}.
 %%
-%\ref{sec:examples} is where we discuss a number of examples concerning the usage of the \mllib{}, and its potential applications.
+%\cref{sec:examples} is where we discuss a number of examples concerning the usage of the \mllib{}, and its potential applications.
 %%
-%Finally, \ref{sec:conclusions} concludes the paper, providing some insights about the future research directions stemming from this work.
+%Finally, \cref{sec:conclusions} concludes the paper, providing some insights about the future research directions stemming from this work.
 %
 
 \section{Motivation and Goals}\label{sec:goals}
+
+\gcnote{Ci sono solo goal qui... niente motivazioni. Magari si riesce a prendere qualcosa dalla prossima sez. e spostare qui.}
 
 %Broadly speaking, a logic API for ML enables the combination or integration of symbolic AI's expressiveness and sub-symbolic AI's flexibility, at a deeper and unprecedented level.
 %
@@ -218,16 +212,19 @@ However, in practice, further phases are included, such as data provisioning and
 %Finally, hyper parameters must be carefully tuned according to the data scientist's experience, and the time constraints and computational resources at hand.
 %
 %
-Thus, from a coarse-grained perspective, a machine learning workflow can be conceived as composed by six major phases, overviewed in Figure \ref{fig:activities1} and detailed in the following.
+Thus, from a coarse-grained perspective, a machine learning workflow can be conceived as composed by six major phases,
+%overviewed in Figure \cref{fig:activities1} and
+detailed in the following.
 %
-\begin{figure}
-	\centering
-	\includegraphics[width=\linewidth]{figures/phases1.pdf}
-	\caption{Major phases of a generic ML workflow: the background colour denotes the expected design and implementation effort for supporting the phase in logic API for ML (low effort $\leftrightarrow$ green, moderate effort $\leftrightarrow$ yellow, considerable effort $\leftrightarrow$ red).}
-	\label{fig:activities1}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=\linewidth]{figures/phases1.pdf}
+%	\caption{Major phases of a generic ML workflow: the background colour denotes the expected design and implementation effort for supporting the phase in logic API for ML (low effort $\leftrightarrow$ green, moderate effort $\leftrightarrow$ yellow, considerable effort $\leftrightarrow$ red).}
+%	\label{fig:activities1}
+%\end{figure}
 
 \paragraph{Dataset loading}
+
 Provided that the data provisioning phase has resulted into a dataset -- roughly, a collection of homogenous data, often coming in the form of a single file, a folder or a database --, the first step of any ML workflow consists of loading that dataset in memory for later processing.
 %
 To support such step, ML frameworks come with ad-hoc functionalities aimed at loading the dataset by reading a file from the local file system, by fetching it from the Web, or by querying a DBMS.
@@ -393,16 +390,16 @@ These are introduced below:
 	\end{inlinelist}
 \end{description}
 
-\begin{figure}
-	\centering
-	\includegraphics[width=\linewidth]{figures/phases2.pdf}
-	\caption{Model and meta-model of a logic API for ML}
-	\label{fig:fasi2}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=\linewidth]{figures/phases2.pdf}
+%	\caption{Model and meta-model of a logic API for ML}
+%	\label{fig:fasi2}
+%\end{figure}
 
 Our logic API for ML supports the representation, combination, and manipulation of entities of these kinds.
 %
-In particular, \ref{fig:fasi2} depicts the overall workflow, the specific activities therein contained, and the involved entities, from the user perspective.
+In particular, \cref{fig:fasi2} depicts the overall workflow, the specific activities therein contained, and the involved entities, from the user perspective.
 %
 Each phase of a ML workflow is characterised by a specific set of activities the data scientist may be willing to perform.
 %
@@ -410,7 +407,7 @@ These should be therefore declaratively representable in logic.
 
 Accordingly, in the reminder of this section, we enumerate the most relevant activities our logic API should support, and the entities they operate upon.
 %
-Notably, activities are grouped w.r.t. the ML phases they operate in, according to the ML workflow elicited in \ref{ssec:analysis}.
+Notably, activities are grouped w.r.t. the ML phases they operate in, according to the ML workflow elicited in \cref{ssec:analysis}.
 
 %\gcnote{Descrivere il workflow di \ref{fig:fasi2}}
 
@@ -471,16 +468,17 @@ This is yet another meta-activity, with several possible variants depending on t
 \end{description}
 
 %
-\ref{fig:fasi2} provides an overview of the overall workflow these activities are involved into.
+\Cref{fig:fasi2} provides an overview of the overall workflow these activities are involved into.
 %
 In particular, it represents inter-dependencies among all such activities, other than stressing what sorts of entities they accept as input and produce as output.
 %
 In the next section, we discuss how these activities are reified into actual actual predicates.
 
-\section{Realising the API: \mllib{} Design}
-\label{sec:project}
+\section{\mllib{} Overview and Architecture}
 
-Here we discuss the design of \mllib, i.e. a logic programming library reifying the logic API for ML modelled in \ref{sec:requirements}.
+\gcnote{Idea: qui di mettiamo veramente poca roba. Giusto le figure \ref{fig:layers} e \ref{fig:design-overview}. Per il resto rimandiamo tutto all'appendice.}
+
+Here we discuss the design of \mllib, i.e. a logic programming library reifying the logic API for ML modelled in \cref{sec:requirements}.
 
 \begin{figure}
     \centering
@@ -489,7 +487,7 @@ Here we discuss the design of \mllib, i.e. a logic programming library reifying 
     \label{fig:layers}
 \end{figure}
 
-The overall architecture is depicted in \ref{fig:layers}.
+The overall architecture is depicted in \cref{fig:layers}.
 %
 The \mllib{} assumes a goal-oriented logic solver being in place, where ordinary logic programs can be executed.
 %
@@ -509,18 +507,305 @@ For instance, targeting the JVM may imply \deeplearningforj{} must be exploited 
 %
 However, while technological choices are contingent and subject to change, the overall architecture is meant to support the implementation of the \mllib{} as a façade towards the underlying OO library, regardless of what it is.
 
-%\begin{sidewaysfigure}
-%    \centering
-%    \includegraphics[width=\linewidth]{figures/entities.pdf}
-%    \caption{Overview of our \mllib{} design. The chart represents the many entities logic programmers may exploit via our \mllib{}, and the many predicates supporting their creation, manipulation, or representation. Predicates are depicted with either a yellow diamond in case they are non-deterministic (a.k.a. backtrackable), or a green circle otherwise.}
-%    \label{fig:design-overview}
-%\end{sidewaysfigure}
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{figures/entities.pdf}
+    \caption{Overview of our \mllib{} design. The chart represents the many entities logic programmers may exploit via our \mllib{}, and the many predicates supporting their creation, manipulation, or representation. Predicates are depicted with either a yellow diamond in case they are non-deterministic (a.k.a. backtrackable), or a green circle otherwise.}
+    \label{fig:design-overview}
+\end{figure*}
 
-At the functional level, the design of our \mllib{} is provided in terms the entities from \ref{sec:requirements}, and the logic predicates available to create, manipulate, or represent them.
+At the functional level, the design of our \mllib{} is provided in terms the entities from \cref{sec:requirements}, and the logic predicates available to create, manipulate, or represent them.
 %
-\ref{fig:design-overview} provides an overview of these predicates, grouped by entities.
+\Cref{fig:design-overview} provides an overview of these predicates, grouped by entities.
+
+\section{\mllib{} Examples}
+\label{sec:examples}
+
+Here we exemplify the usage of the \mllib{} to serve the purposes described in \cref{ssec:goals}.
+
+From a LP perspective, our examples assume the existence of a logic solver/language exploiting some implementation of the \mllib{}.
 %
-Both in the figure and in the reminder of this section, we adopt the following notation to denote the interfaces of logic predicates:
+For the sake of simplicity, we assume a Prolog solver is employed.
+%
+Hence, examples consists of Prolog scripts, possibly involving standard Prolog predicates.
+
+From a ML perspective, our examples assume a very simple scenario where a neural-network classifier is trained on the well known Iris dataset\footnotemark.
+%
+The resulting NN is then exploited to write a simple hybrid predicate aimed at classifying unseen Iris instances.
+%
+\footnotetext{\url{https://archive.ics.uci.edu/ml/datasets/iris}}
+
+\paragraph{Declarative ML}
+
+\begin{figure}
+    \lstinputlisting[
+        language=Prolog,
+        label={lst:dataset-loading},
+        caption={Dataset loading from file}
+    ]{listings/dataset-loading.pl}
+    %
+    \lstinputlisting[
+        language=Prolog,
+        label={lst:pre-processing-pipeline},
+        caption={Pre-processing pipeline}
+    ]{listings/pre-processing-pipeline.pl}
+    %
+    \lstinputlisting[
+        language=Prolog,
+        label={lst:neural-network-declare},
+        caption={Neural network structure declaration}
+    ]{listings/neural-network-declare.pl}
+\end{figure}
+
+Declarativity is a key benefit of our symbolic approach to ML.
+%
+The \mllib{} supports declarative ML in several ways, as exemplified by listings \ref{lst:dataset-loading}, \ref{lst:pre-processing-pipeline}, \ref{lst:neural-network-declare}, and \ref{lst:training}.
+
+In particular, \cref{lst:dataset-loading} shows how the schema and data entries of the Iris dataset can be treated in logic.
+%
+Notably, the Iris data set contains 150 rows describing as many individuals of the Iris flower.
+%
+For each exemplary, 4 continuous input attributes -- \emph{petal} and \emph{sepal width} and \emph{length} -- are recorded, other than a categorical target attribute---denoting the actual Iris \emph{species}.
+%
+There are three particular species of Iris in this data set -- namely, Setosa, Virginica, and Versicolor --, and the 150 examples are evenly distributed among them---i.e., there are 50 instances for each class.
+%
+The Prolog script describes the Iris dataset's schema in clausal form, as discussed in \cref{ssec:schemas}.
+%
+It also declares two predicates -- namely, \pl{iris\_schema/1} and \pl{iris\_dataset/1} -- aimed at letting the logic programmer retrieve either the schema or its dataset in object form.
+%
+More precisely, \pl{iris\_schema/1} attempts to read the schema from the local theory, while \pl{iris\_dataset/1} attempts the load the dataset from a CSV file.
+%
+\Cref{lst:logic-dataset-loading} (presented later in this section) reports a similar scenario where the dataset as well is loaded from the local theory.
+
+\Cref{lst:pre-processing-pipeline} exemplifies the declaration of a pre-processing pipeline aimed at normalising the input attributes of any \pl{Dataset} having the same \pl{Schema} of Iris, other than one-hot encoding its output attributes.
+%
+The resulting \pl{Pipeline} is then fitted against the provided \pl{Dataset}, and bound to the corresponding output argument.
+
+In turn, \cref{lst:neural-network-declare} presents a general purpose predicate aimed at defining multi-layered perceptron predictors with an arbitrary amount of hidden layers.
+%
+This is made possible by the \pl{multi\_layer\_perceptron/4} predicate, which requires the caller to provide the amount of neurons to be instantiated for
+%
+\begin{inlinelist}
+    \item the input layer (\pl{Nin}),
+    \item the output layer (\pl{Nout}), and
+    \item for each hidden layer (\pl{Nhidden}).
+\end{inlinelist}
+%
+Notably, \pl{Nhidden} should consist of a list in integers, denoting the amount of neurons for each hidden layer -- from the outermost to the innermost --, while the total amount of integers corresponds to the amount of hidden layers.
+%
+The resulting neural network predictor is then bound to the \pl{NN} output argument.
+%
+So, for instance, a NN having 4 input neurons, 2 hidden layers with 5 and 7 neurons respectively, and 3 output neurons can be declared as follows:
+%
+\begin{center}
+    \pl{multi\_layer\_perceptron(4, [5, 7], 3, NN)}
+\end{center}
+
+Finally, \cref{lst:training} declares an end-to-end ML workflow aimed at selecting and training the best NN architecture to tackle Iris classification.
+%
+Further details about that listing are discussed later in this section.
+%
+For the moment, we simply stress the declarative nature of the script which can be regarded as a formal -- yet human-readable -- specification of a classifier training workflow.
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=.3\linewidth]{figures/mlp.png}
+%    \caption{Simplified representation of a multi-layer perceptron having 4 input neurons, 2 hidden layers with 5 and 7 neurons respectively, and 3 output neurons}
+%    \label{fig:mlp}
+%\end{figure}
+
+\paragraph{Symbolic data sources}
+
+\lstinputlisting[
+    float,
+    language=Prolog,
+    label={lst:logic-dataset-loading},
+    caption={Dataset loading from the local theory}
+]{listings/logic-dataset-loading.pl}
+
+In an hybrid system integrating both symbolic reasoning and sub-symbolic learning, it may be useful to perform ML upon data expressed in logic form.
+%
+This requires logic theories to act as symbolic data sources.
+
+Our \mllib{} makes it possible to support such scenario, as exemplified in \cref{lst:logic-dataset-loading}.
+%
+The script is assumed to replace \cref{lst:logic-dataset-loading} in those situation where the Iris dataset is logically described in clausal form.
+%
+Here, the \pl{iris\_dataset/1} attempts to load the data from the local theory instead of a file.
+
+\paragraph{Model selection via resolution}
+
+\lstinputlisting[
+    float,
+    language=Prolog,
+    label={lst:training},
+    caption={Declarative description of a ML workflow aimed at selecting the best hyper and learning parameters for a NN classifier}
+]{listings/training.pl}
+
+The automatic exploration of a search space subtended by logic resolution could be exploited to perform model selection.
+%
+Indeed, model selection essentially consists of an exploration of the hyper and learning parameters space, looking for the best possible values---i.e. those hyper and learning parameters assignments corresponding to well-performing predictors on the available training set.
+
+Accordingly, the \mllib{} supports expressing and performing model selection in logic, as exemplified in \cref{lst:training}.
+%
+There hyper, learning, and workflow parameters are expressed as logic facts, and the \pl{params/2} predicate is defined to enumerate all possible combinations of theirs---e.g. via Prolog's backtracking mechanism.
+%
+The \pl{model\_selection/5} predicate is in charge of stepping through all such parameters with the purpose of selecting, and training all corresponding NN predictors which attain a sufficiently high predictive performance---denoted by the \pl{target\_performance/1} fact.
+%
+For each trained predictor, the predicate outputs not only a reference to the \pl{Predictor} itself, but also its \pl{Performance}, and the affine \pl{Transformation} to be applied to each datum for which predictions should be drawn using that predictor.
+
+More precisely, the predicate \pl{model\_selection/5} works by
+%
+\begin{enumerate}
+    \item splitting the provided \pl{Dataset} into a \pl{TrainingSet} and a \pl{TestSet}, according to a split ratio (\pl{R}) declared by the \pl{test\_percentage/1} fact
+    \item declaring and fitting a pre-processing \pl{Transformation} aimed at normalising the \pl{TrainingSet}'s input attributes, and one-hot encoding its output attributes
+    \item applying such \pl{Transformation} to the \pl{TrainingSet}, hence producing a \pl{ProcessedTrainingSet}
+    \item stepping through all possible hyper (\pl{HyperParams}) and learning (\pl{LearnParams}) parameters combinations,
+    \item training each corresponding predictor, via 10-fold cross validation (CV), and computing its average validation-test performance (\pl{P})
+    \item skipping each hyper and learning parameters combination such that the average performance \pl{P} is lower than the target performance \pl{T}
+    \item re-training a full-fledged MLP on the whole \pl{TrainingSet}, for each parameters combination such that \pl{P >= T}
+    \item testing that MLP against the \pl{ProcessedTestSet} -- attained by applying the aforementioned \pl{Transformation} to the \pl{TestSet} as well --, thus computing the MLP actual \pl{Performance}
+\end{enumerate}
+%
+In other words, the \pl{model\_selection/5} represents a declarative, and pretty general, workflow for model selection---which may be adapted to other supervised learning tasks with minimal changes.
+%
+It relies on a number of predicates declaring some particular steps of the workflow, and exemplifying many \mllib{} functionalities.
+%
+These are reported in \cref{lst:training} as well.
+%
+For instance, \pl{train\_cv/4} is in charge of performing 10-fold CV on a given \pl{Dataset}, to assess a given \pl{HyperParams}--\pl{LearnParams} combination, to then compute the \pl{AveragePerformance} of the 10 predictors constructed in this way.
+%
+Each single fold of a \pl{K}-fold CV process is managed by the \pl{train\_cv\_fold/5} predicate, which in turn exploits \pl{train\_validate/5} predicate to train and validate each single predictor.
+%
+Finally, the \pl{test/3} predicate can be exploited to either test or validate a predictor depending on whether the test or validation set is provided as argument.
+
+Under these hypotheses, a model selection workflow for the Iris dataset may be triggered via a concise logic query such as:
+%
+\begin{center}
+    \pl{?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, P, \_, A).}
+\end{center}
+%
+If all aspects of the model selection workflow are correctly declared, the query should provide multiple successful solutions corresponding to all trained predictors (\pl{P}) and their test-set accuracies (\pl{A}).
+
+\paragraph{Hybrid reasoning}
+
+\lstinputlisting[
+    float,
+    language=Prolog,
+    label={lst:hybrid-predictor},
+    caption={Exploitation of the NN classifier trained in \cref{lst:training} to create an hybrid predicate -- namely \pl{iris/5} -- aimed at classifying Iris flowers}
+]{listings/hybrid-predictor.pl}
+
+Finally, \cref{lst:hybrid-predictor} shows the exploitation of a trained NN predictor as a predicate aimed at classifying (possibly) unseen instances of the Iris flower.
+%
+The script serves a twofold purpose: it exemplifies the \mllib{} functionalities aimed at drawing predictions out of trained ML predictors, and, in particular, it provides an example of an \emph{hybrid} reasoner---where symbolic and sub-symbolic AI seamlessly interoperate.
+
+The script assumes a fact of the form \pl{iris\_nn(N, T)} is available into the solver's KB, storing a reference to a trained NN predictor (\pl{N}) and to the affine transformation (\pl{T}) to be applied to each datum the predictor should be fed with.
+%
+Such assumption may be satisfied, in Prolog, by a query such as the following one:
+%
+\begin{center}
+    \pl{?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, N, T, \_), !, assert(iris\_nn(N, T)).}
+\end{center}
+%
+which selects and trains a single NN and stores it into the solver's dynamic KB.
+
+Under such assumption, logic programmers may write an \pl{iris/5} predicate such as the one shown in \cref{lst:hybrid-predictor}.
+%
+The predicate allows the caller to classify Iris instances by triggering a previously trained NN, and by letting it draw predictions on the data row attained by composing the predicate's arguments---via the \pl{predict/3} predicate.
+%
+The prediction is then converted into a class constant -- via the \pl{classify/4} predicate --, which is in turn bound to the output parameter of \pl{iris/5}---namely \pl{Species}.
+
+It is worth to be highlighted that, from the caller perspective, the \pl{iris/5} described so far is undistinguishable from a purely symbolic predicate serving the same purpose (i.e., Iris classification) and having the same name and arity---such as the one described in \cref{lst:symbolic-predictor}.
+
+\lstinputlisting[
+    float,
+    language=Prolog,
+    label={lst:symbolic-predictor},
+    caption={A purely symbolic classifier for Iris flowers, functionally equivalent to the hybrid one from \cref{lst:hybrid-predictor}}
+]{listings/symbolic-predictor.pl}
+
+%----------------------------------------------------------------------------------------
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+%Oggetto di questa tesi è la realizzazione di un'API logica per apprendimento automatico in cui sia possibile addestrare e gestire reti neurali.
+%%
+%Tale API è stata implementata nella forma di NN-Lib, un libreria Prolog per 2P-KT, in cui le funzionalità richieste sono reificate in apposite primitive.
+%%
+%La progettazione di NN-Lib ha richiesto la modellazione delle componenti fondamentali che costituiscono un processo di apprendimento supervisionato.
+%%
+%Il lavoro effettuato ha quindi comportato particolari sforzi per la rappresentazione di elementi non direttamente legati alle reti neurali come i dati o le elaborazioni applicate ad essi.
+%%
+%Di conseguenza la API fornita risulta versatile, in quanto le funzionalità offerte sono scomposte in operazioni semplici, che oltre a permettere la definizione di processi di apprendimento possono essere applicate in altri contesti.
+%%
+%Inoltre, grazie all'uso della teoria logica per la definizione del formato dei dati, le primitive realizzate risultano sintetiche, espressive e ad alto livello di astrazione.
+%%
+%Il lavoro svolto è validato attraverso gli esempi applicativi descritti nel  capitolo~\ref{sec:examples} che mostrano le funzionalità relative agli obbiettivi definiti nell'introduzione.
+%%
+%In particolare il primo di questi mostra come NN-Lib possa essere utilizzata per addestrare efficacemente una rete neurale a classificare le istanze del dataset Iris.
+%%
+%Questo esempio permette di affermare che si sia raggiunto lo scopo di fornire un'API completa.
+%%
+%In aggiunta gli esempi successivi mostrano come integrare una rete neurale in processi risolutivi ibridi e come introdurre computazioni logiche in processi di addestramento.
+%%
+%In definitiva NN-Lib risulta essere, nonostante il limitato numero di primitive fornite in questo primo prototipo, una soluzione innovativa che permette la sperimentazione di diverse forme di integrazione tra ambito simbolico e sub-simbolico con ottimi prospetti in relazione a sviluppi futuri.
+
+In this paper, we propose a logic API supporting the seamless integration of logic solvers with sub-symbolic AI, and, in particular neural-network-based supervised ML.
+
+Stemming from a domain analysis aimed at identifying the major computational entities involved in a supervised ML workflow, we design our API in terms of computational entities and the operations/functionalities they should support.
+%
+We then reify our API into a set of logic predicates composing the \mllib{}---i.e., an abstract logic library which any goal-oriented solver may support, there including Prolog ones.
+%
+Both the syntax and the semantics of each single predicate are discussed, as part of the major contribution of this paper.
+%
+Architectural and technological requirements are discussed as well.
+
+Among the most relevant requirements, we stress the need of realising the \mllib{} as a façade towards some lower-level OOP library for ML.
+%
+Furthermore, to support the prototyping of our \mllib{} on top of the \twopkt{} logic ecosystem -- which technologically unifies the LP and OOP realms --, we also require the underlying OOP library for ML to be JVM-compliant.
+%
+Hence, we elaborate on a technological discussion aimed at selecting the most adequate JVM technology for ML.
+
+Finally, we provide a number of usage examples aimed at showing the potential of the \mllib{}.
+%
+In particular, we discuss examples where our logic API supports \emph{declarative} ML (possibly from symbolic data sources), model selection via resolution, and hybrid reasoning.
+%
+Indeed, the \mllib{} enables the user to formally define ML workflows in a way which is both human- and machine-interpretable, focussing on what should be done, rather than how.
+
+Hybrid reasoning, in particular, is the most relevant contribution of ours.
+%
+It consists in the seamless integration of logic and sub-symbolic AI at the functional level.
+%
+In fact, thanks to our \mllib{}, trained sub-symbolic predictors may be used in LP as ordinary predicates.
+
+\paragraph{Future Works}
+
+In the future, we expect contributions to stem from our \mllib{} along two different research threads.
+%
+The first thread concerns the exploitation of the \mllib{} to create hybrid systems, where LP and ML are integrated in manifold ways.
+%
+This is made possible by our logic API for ML, which reduces the abstraction gap among LP and ML, as well as the \mllib, which lowers the technological barriers preventing the integration of symbolic and sub-symbolic AI.
+%
+The second thread concerns the extensions of the \mllib{}, which should be eventually delivered to cover currently unsupported functionalities---as well as other ML predictors than NN.
+
+
+%% The file kr.bst is a bibliography style file for BibTeX 0.99c
+\nocite{*}
+\bibliographystyle{kr}
+\bibliography{bibliography}
+
+\pagebreak
+
+\section*{Appendix}
+
+\subsection*{Realising the API: \mllib{} Design}
+\label{sec:project}
+
+%
+%Both in the figure and in
+In the reminder of this section, we adopt the following notation to denote the interfaces of logic predicates:
 %
 \begin{center}
     \pl{functor($\odot_1$ Name$_1$: \pli{type}$_1$, \ldots, $\odot_N$ Name$_N$: \pli{type}$_N$)}
@@ -540,9 +825,9 @@ These are necessary to make our \mllib{} able to operate with the non-logic enti
 
 Accordingly, in the reminder of this section, we enumerate the predicates constituting our \mllib{}, categorised w.r.t. the entities they act upon.
 %
-In particular, the \mllib{} exposes predicates covering 4 major sorts of entities -- i.e. the ones elicited in \ref{ssec:modelling}, namely: Schema, Dataset, Transformation, and Predictor --, plus a number of ancillary entities aimed at supporting their manipulation -- such as Classification Strategy, Source Type, and Parameter -- or specialising their behaviour---such as Neural Network, and Layer.
+In particular, the \mllib{} exposes predicates covering 4 major sorts of entities -- i.e. the ones elicited in \cref{ssec:modelling}, namely: Schema, Dataset, Transformation, and Predictor --, plus a number of ancillary entities aimed at supporting their manipulation -- such as Classification Strategy, Source Type, and Parameter -- or specialising their behaviour---such as Neural Network, and Layer.
 
-\subsection{Schemas}
+\subsubsection{Schemas}
 \label{ssec:schemas}
 
 Schemas are concise metadata describing datasets' columns.
@@ -646,7 +931,7 @@ Notably, the predicate is \emph{bi-directional} and its arguments can act as eit
 %
 In case an unbound \pl{Schema} variable is provided as output parameter, and assuming that the \pl{Name}, \pl{Attributes}, and \pl{Targets} parameters are fully instantiated, the \pl{schema/4} predicate acts as yet another way to create a schema in object form---and the newly created schema is bound to \pl{Schema}.
 
-\subsection{Datasets}
+\subsubsection{Datasets}
 
 A dataset is a tabular representation of a bunch of homogenous data records.
 %
@@ -686,8 +971,8 @@ Admissible values for the \pl{SourceType} parameter are determined by the \pl{so
 \begin{center}
     \begin{tabular}{l}
         \pl{source\_type(\pli{csv}).}
-%        \\
-%        \pl{source\_type(\pli{jdbc}).}
+        %        \\
+        %        \pl{source\_type(\pli{jdbc}).}
     \end{tabular}
 \end{center}
 %
@@ -827,7 +1112,7 @@ This can be attained via the following predicate:
 %
 Given the references to both a dataset and its schema in object form, the predicate populates the solver's \emph{dynamic} KB with the a number of clauses representing the dataset and its schema in the clausal form described above.
 
-\subsection{Transformations}
+\subsubsection{Transformations}
 
 A transformation is a function altering a dataset and, possibly, its schema.
 %
@@ -1000,7 +1285,7 @@ Conversely, it applies the inverse of \pl{Transformation} to \pl{Data$_{out}$} i
 %
 When this is the case, the transformed result is unified with \pl{Data$_{in}$}.
 
-\subsection{Predictors}
+\subsubsection{Predictors}
 
 Predictors are stateful entities which can be \emph{trained} over a dataset to later draw \emph{predictions} on new data matching the same schema.
 %
@@ -1242,282 +1527,7 @@ Admissible activation functions are regulated by the \pl{activation/1} predicate
 %
 while others may be possibly added.
 
-\section{\mllib{} Examples}
-\label{sec:examples}
 
-Here we exemplify the usage of the \mllib{} to serve the purposes described in \ref{ssec:goals}.
-
-From a LP perspective, our examples assume the existence of a logic solver/language exploiting some implementation of the \mllib{}.
-%
-For the sake of simplicity, we assume a Prolog solver is employed.
-%
-Hence, examples consists of Prolog scripts, possibly involving standard Prolog predicates.
-
-From a ML perspective, our examples assume a very simple scenario where a neural-network classifier is trained on the well known Iris dataset\footnotemark.
-%
-The resulting NN is then exploited to write a simple hybrid predicate aimed at classifying unseen Iris instances.
-%
-\footnotetext{\url{https://archive.ics.uci.edu/ml/datasets/iris}}
-
-\paragraph{Declarative ML}
-
-\begin{figure}
-    \lstinputlisting[
-        language=Prolog,
-        label={lst:dataset-loading},
-        caption={Dataset loading from file}
-    ]{listings/dataset-loading.pl}
-    %
-    \lstinputlisting[
-        language=Prolog,
-        label={lst:pre-processing-pipeline},
-        caption={Pre-processing pipeline}
-    ]{listings/pre-processing-pipeline.pl}
-    %
-    \lstinputlisting[
-        language=Prolog,
-        label={lst:neural-network-declare},
-        caption={Neural network structure declaration}
-    ]{listings/neural-network-declare.pl}
-\end{figure}
-
-Declarativity is a key benefit of our symbolic approach to ML.
-%
-The \mllib{} supports declarative ML in several ways, as exemplified by listings \ref{lst:dataset-loading}, \ref{lst:pre-processing-pipeline}, \ref{lst:neural-network-declare}, and \ref{lst:training}.
-
-In particular, \ref{lst:dataset-loading} shows how the schema and data entries of the Iris dataset can be treated in logic.
-%
-Notably, the Iris data set contains 150 rows describing as many individuals of the Iris flower.
-%
-For each exemplary, 4 continuous input attributes -- \emph{petal} and \emph{sepal width} and \emph{length} -- are recorded, other than a categorical target attribute---denoting the actual Iris \emph{species}.
-%
-There are three particular species of Iris in this data set -- namely, Setosa, Virginica, and Versicolor --, and the 150 examples are evenly distributed among them---i.e., there are 50 instances for each class.
-%
-The Prolog script describes the Iris dataset's schema in clausal form, as discussed in \ref{ssec:schemas}.
-%
-It also declares two predicates -- namely, \pl{iris\_schema/1} and \pl{iris\_dataset/1} -- aimed at letting the logic programmer retrieve either the schema or its dataset in object form.
-%
-More precisely, \pl{iris\_schema/1} attempts to read the schema from the local theory, while \pl{iris\_dataset/1} attempts the load the dataset from a CSV file.
-%
-\ref{lst:logic-dataset-loading} (presented later in this section) reports a similar scenario where the dataset as well is loaded from the local theory.
-
-\ref{lst:pre-processing-pipeline} exemplifies the declaration of a pre-processing pipeline aimed at normalising the input attributes of any \pl{Dataset} having the same \pl{Schema} of Iris, other than one-hot encoding its output attributes.
-%
-The resulting \pl{Pipeline} is then fitted against the provided \pl{Dataset}, and bound to the corresponding output argument.
-
-In turn, \ref{lst:neural-network-declare} presents a general purpose predicate aimed at defining multi-layered perceptron predictors with an arbitrary amount of hidden layers.
-%
-This is made possible by the \pl{multi\_layer\_perceptron/4} predicate, which requires the caller to provide the amount of neurons to be instantiated for
-%
-\begin{inlinelist}
-    \item the input layer (\pl{Nin}),
-    \item the output layer (\pl{Nout}), and
-    \item for each hidden layer (\pl{Nhidden}).
-\end{inlinelist}
-%
-Notably, \pl{Nhidden} should consist of a list in integers, denoting the amount of neurons for each hidden layer -- from the outermost to the innermost --, while the total amount of integers corresponds to the amount of hidden layers.
-%
-The resulting neural network predictor is then bound to the \pl{NN} output argument.
-%
-So, for instance, a NN such as the one depicted in \ref{fig:mlp} can be declared as follows:
-%
-\begin{center}
-    \pl{multi\_layer\_perceptron(4, [5, 7], 3, NN)}
-\end{center}
-
-Finally, \ref{lst:training} declares an end-to-end ML workflow aimed at selecting and training the best NN architecture to tackle Iris classification.
-%
-Further details about that listing are discussed later in this section.
-%
-For the moment, we simply stress the declarative nature of the script which can be regarded as a formal -- yet human-readable -- specification of a classifier training workflow.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=.3\linewidth]{figures/mlp.png}
-    \caption{Simplified representation of a multi-layer perceptron having 4 input neurons, 2 hidden layers with 5 and 7 neurons respectively, and 3 output neurons}
-    \label{fig:mlp}
-\end{figure}
-
-\paragraph{Symbolic data sources}
-
-\lstinputlisting[
-    float,
-    language=Prolog,
-    label={lst:logic-dataset-loading},
-    caption={Dataset loading from the local theory}
-]{listings/logic-dataset-loading.pl}
-
-In an hybrid system integrating both symbolic reasoning and sub-symbolic learning, it may be useful to perform ML upon data expressed in logic form.
-%
-This requires logic theories to act as symbolic data sources.
-
-Our \mllib{} makes it possible to support such scenario, as exemplified in \ref{lst:logic-dataset-loading}.
-%
-The script is assumed to replace \ref{lst:logic-dataset-loading} in those situation where the Iris dataset is logically described in clausal form.
-%
-Here, the \pl{iris\_dataset/1} attempts to load the data from the local theory instead of a file.
-
-\paragraph{Model selection via resolution}
-
-\lstinputlisting[
-    float,
-    language=Prolog,
-    label={lst:training},
-    caption={Declarative description of a ML workflow aimed at selecting the best hyper and learning parameters for a NN classifier}
-]{listings/training.pl}
-
-The automatic exploration of a search space subtended by logic resolution could be exploited to perform model selection.
-%
-Indeed, model selection essentially consists of an exploration of the hyper and learning parameters space, looking for the best possible values---i.e. those hyper and learning parameters assignments corresponding to well-performing predictors on the available training set.
-
-Accordingly, the \mllib{} supports expressing and performing model selection in logic, as exemplified in \ref{lst:training}.
-%
-There hyper, learning, and workflow parameters are expressed as logic facts, and the \pl{params/2} predicate is defined to enumerate all possible combinations of theirs---e.g. via Prolog's backtracking mechanism.
-%
-The \pl{model\_selection/5} predicate is in charge of stepping through all such parameters with the purpose of selecting, and training all corresponding NN predictors which attain a sufficiently high predictive performance---denoted by the \pl{target\_performance/1} fact.
-%
-For each trained predictor, the predicate outputs not only a reference to the \pl{Predictor} itself, but also its \pl{Performance}, and the affine \pl{Transformation} to be applied to each datum for which predictions should be drawn using that predictor.
-
-More precisely, the predicate \pl{model\_selection/5} works by
-%
-\begin{enumerate}
-    \item splitting the provided \pl{Dataset} into a \pl{TrainingSet} and a \pl{TestSet}, according to a split ratio (\pl{R}) declared by the \pl{test\_percentage/1} fact
-    \item declaring and fitting a pre-processing \pl{Transformation} aimed at normalising the \pl{TrainingSet}'s input attributes, and one-hot encoding its output attributes
-    \item applying such \pl{Transformation} to the \pl{TrainingSet}, hence producing a \pl{ProcessedTrainingSet}
-    \item stepping through all possible hyper (\pl{HyperParams}) and learning (\pl{LearnParams}) parameters combinations,
-    \item training each corresponding predictor, via 10-fold cross validation (CV), and computing its average validation-test performance (\pl{P})
-    \item skipping each hyper and learning parameters combination such that the average performance \pl{P} is lower than the target performance \pl{T}
-    \item re-training a full-fledged MLP on the whole \pl{TrainingSet}, for each parameters combination such that \pl{P >= T}
-    \item testing that MLP against the \pl{ProcessedTestSet} -- attained by applying the aforementioned \pl{Transformation} to the \pl{TestSet} as well --, thus computing the MLP actual \pl{Performance}
-\end{enumerate}
-%
-In other words, the \pl{model\_selection/5} represents a declarative, and pretty general, workflow for model selection---which may be adapted to other supervised learning tasks with minimal changes.
-%
-It relies on a number of predicates declaring some particular steps of the workflow, and exemplifying many \mllib{} functionalities.
-%
-These are reported in \ref{lst:training} as well.
-%
-For instance, \pl{train\_cv/4} is in charge of performing 10-fold CV on a given \pl{Dataset}, to assess a given \pl{HyperParams}--\pl{LearnParams} combination, to then compute the \pl{AveragePerformance} of the 10 predictors constructed in this way.
-%
-Each single fold of a \pl{K}-fold CV process is managed by the \pl{train\_cv\_fold/5} predicate, which in turn exploits \pl{train\_validate/5} predicate to train and validate each single predictor.
-%
-Finally, the \pl{test/3} predicate can be exploited to either test or validate a predictor depending on whether the test or validation set is provided as argument.
-
-Under these hypotheses, a model selection workflow for the Iris dataset may be triggered via a concise logic query such as:
-%
-\begin{center}
-    \pl{?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, P, \_, A).}
-\end{center}
-%
-If all aspects of the model selection workflow are correctly declared, the query should provide multiple successful solutions corresponding to all trained predictors (\pl{P}) and their test-set accuracies (\pl{A}).
-
-\paragraph{Hybrid reasoning}
-
-\lstinputlisting[
-    float,
-    language=Prolog,
-    label={lst:hybrid-predictor},
-    caption={Exploitation of the NN classifier trained in \ref{lst:training} to create an hybrid predicate -- namely \pl{iris/5} -- aimed at classifying Iris flowers}
-]{listings/hybrid-predictor.pl}
-
-Finally, \ref{lst:hybrid-predictor} shows the exploitation of a trained NN predictor as a predicate aimed at classifying (possibly) unseen instances of the Iris flower.
-%
-The script serves a twofold purpose: it exemplifies the \mllib{} functionalities aimed at drawing predictions out of trained ML predictors, and, in particular, it provides an example of an \emph{hybrid} reasoner---where symbolic and sub-symbolic AI seamlessly interoperate.
-
-The script assumes a fact of the form \pl{iris\_nn(N, T)} is available into the solver's KB, storing a reference to a trained NN predictor (\pl{N}) and to the affine transformation (\pl{T}) to be applied to each datum the predictor should be fed with.
-%
-Such assumption may be satisfied, in Prolog, by a query such as the following one:
-%
-\begin{center}
-    \pl{?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, N, T, \_), !, assert(iris\_nn(N, T)).}
-\end{center}
-%
-which selects and trains a single NN and stores it into the solver's dynamic KB.
-
-Under such assumption, logic programmers may write an \pl{iris/5} predicate such as the one shown in \ref{lst:hybrid-predictor}.
-%
-The predicate allows the caller to classify Iris instances by triggering a previously trained NN, and by letting it draw predictions on the data row attained by composing the predicate's arguments---via the \pl{predict/3} predicate.
-%
-The prediction is then converted into a class constant -- via the \pl{classify/4} predicate --, which is in turn bound to the output parameter of \pl{iris/5}---namely \pl{Species}.
-
-It is worth to be highlighted that, from the caller perspective, the \pl{iris/5} described so far is undistinguishable from a purely symbolic predicate serving the same purpose (i.e., Iris classification) and having the same name and arity---such as the one described in \ref{lst:symbolic-predictor}.
-
-\lstinputlisting[
-    float,
-    language=Prolog,
-    label={lst:symbolic-predictor},
-    caption={A purely symbolic classifier for Iris flowers, functionally equivalent to the hybrid one from \ref{lst:hybrid-predictor}}
-]{listings/symbolic-predictor.pl}
-
-%----------------------------------------------------------------------------------------
-
-\section{Conclusions}
-\label{sec:conclusions}
-
-%Oggetto di questa tesi è la realizzazione di un'API logica per apprendimento automatico in cui sia possibile addestrare e gestire reti neurali.
-%%
-%Tale API è stata implementata nella forma di NN-Lib, un libreria Prolog per 2P-KT, in cui le funzionalità richieste sono reificate in apposite primitive.
-%%
-%La progettazione di NN-Lib ha richiesto la modellazione delle componenti fondamentali che costituiscono un processo di apprendimento supervisionato.
-%%
-%Il lavoro effettuato ha quindi comportato particolari sforzi per la rappresentazione di elementi non direttamente legati alle reti neurali come i dati o le elaborazioni applicate ad essi.
-%%
-%Di conseguenza la API fornita risulta versatile, in quanto le funzionalità offerte sono scomposte in operazioni semplici, che oltre a permettere la definizione di processi di apprendimento possono essere applicate in altri contesti.
-%%
-%Inoltre, grazie all'uso della teoria logica per la definizione del formato dei dati, le primitive realizzate risultano sintetiche, espressive e ad alto livello di astrazione.
-%%
-%Il lavoro svolto è validato attraverso gli esempi applicativi descritti nel  capitolo~\ref{sec:examples} che mostrano le funzionalità relative agli obbiettivi definiti nell'introduzione.
-%%
-%In particolare il primo di questi mostra come NN-Lib possa essere utilizzata per addestrare efficacemente una rete neurale a classificare le istanze del dataset Iris.
-%%
-%Questo esempio permette di affermare che si sia raggiunto lo scopo di fornire un'API completa.
-%%
-%In aggiunta gli esempi successivi mostrano come integrare una rete neurale in processi risolutivi ibridi e come introdurre computazioni logiche in processi di addestramento.
-%%
-%In definitiva NN-Lib risulta essere, nonostante il limitato numero di primitive fornite in questo primo prototipo, una soluzione innovativa che permette la sperimentazione di diverse forme di integrazione tra ambito simbolico e sub-simbolico con ottimi prospetti in relazione a sviluppi futuri.
-
-In this paper, we propose a logic API supporting the seamless integration of logic solvers with sub-symbolic AI, and, in particular neural-network-based supervised ML.
-
-Stemming from a domain analysis aimed at identifying the major computational entities involved in a supervised ML workflow, we design our API in terms of computational entities and the operations/functionalities they should support.
-%
-We then reify our API into a set of logic predicates composing the \mllib{}---i.e., an abstract logic library which any goal-oriented solver may support, there including Prolog ones.
-%
-Both the syntax and the semantics of each single predicate are discussed, as part of the major contribution of this paper.
-%
-Architectural and technological requirements are discussed as well.
-
-Among the most relevant requirements, we stress the need of realising the \mllib{} as a façade towards some lower-level OOP library for ML.
-%
-Furthermore, to support the prototyping of our \mllib{} on top of the \twopkt{} logic ecosystem -- which technologically unifies the LP and OOP realms --, we also require the underlying OOP library for ML to be JVM-compliant.
-%
-Hence, we elaborate on a technological discussion aimed at selecting the most adequate JVM technology for ML.
-
-Finally, we provide a number of usage examples aimed at showing the potential of the \mllib{}.
-%
-In particular, we discuss examples where our logic API supports \emph{declarative} ML (possibly from symbolic data sources), model selection via resolution, and hybrid reasoning.
-%
-Indeed, the \mllib{} enables the user to formally define ML workflows in a way which is both human- and machine-interpretable, focussing on what should be done, rather than how.
-
-Hybrid reasoning, in particular, is the most relevant contribution of ours.
-%
-It consists in the seamless integration of logic and sub-symbolic AI at the functional level.
-%
-In fact, thanks to our \mllib{}, trained sub-symbolic predictors may be used in LP as ordinary predicates.
-
-\paragraph{Future Works}
-
-In the future, we expect contributions to stem from our \mllib{} along two different research threads.
-%
-The first thread concerns the exploitation of the \mllib{} to create hybrid systems, where LP and ML are integrated in manifold ways.
-%
-This is made possible by our logic API for ML, which reduces the abstraction gap among LP and ML, as well as the \mllib, which lowers the technological barriers preventing the integration of symbolic and sub-symbolic AI.
-%
-The second thread concerns the extensions of the \mllib{}, which should be eventually delivered to cover currently unsupported functionalities---as well as other ML predictors than NN.
-
-
-%% The file kr.bst is a bibliography style file for BibTeX 0.99c
-\bibliographystyle{kr}
-\bibliography{bibliography}
 
 \end{document}
 
