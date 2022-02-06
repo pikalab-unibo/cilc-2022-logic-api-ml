@@ -1,5 +1,5 @@
 % neural network declaration
-multi_layer_perceptron(Nin, Nhidden, Nout, NN) :- 
+multi_layer_perceptron(Nin,Nhidden,Nout,NN):- 
     input_layer(Nin, IL),
     hidden_layer(IL, Nhidden, H), 
     output_layer(H, Nout, softmax, O),
