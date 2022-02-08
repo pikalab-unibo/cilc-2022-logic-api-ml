@@ -26,6 +26,17 @@
 
 \urlstyle{same}
 
+\newcommand{\citeay}[1]{\citeauthor{#1}, \citeyear{#1}}
+\newcommand{\citeayp}[1]{\citeauthor{#1} (\citeyear{#1})}
+
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1.}}
+\newcommand{\emptyparagraph}{\oldparagraph*{}}
+
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1.}}
+\newcommand{\emptysubparagraph}{\oldsubparagraph*{}}
+
 % \usepackage[disable]{todonotes}
 \usepackage{todonotes}
 \newcommand{\gcsidenote}[1]{\todo[size=\tiny,color=green]{\textbf{GC:} #1}}

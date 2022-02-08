@@ -1,9 +1,4 @@
-%%%% kr-instructions.tex -- version 1.3 (11-Jan-2021)
-
-\typeout{KR2022 Instructions for Authors}
-
-% These are the instructions for authors for KR-22.
-
+% !TeX spellcheck = en_GB
 \documentclass{article}
 \pdfpagewidth=8.5in
 \pdfpageheight=11in
@@ -18,24 +13,23 @@
 %\title{Towards a Logic Programming library for Machine Learning: API design and prototyping}
 \title{Logic Programming library for Machine Learning: API design and prototype}
 
-% Multiple author syntax
 \author{%
-Giovanni Ciatto
-\and
-Matteo Castigliò
-\and
-Roberta Calegari
-\\
-\affiliations
-$^1$Departement of Computer Science and Engineering (DISI) %, Alma Mater Studiorum---Università di Bologna
-\\
-$^3$Alma Mater Research Institute for Human Centered AI (AlmaAI)
-\\
-$^{1,3}$Alma Mater Studiorum---Università di Bologna
-\\
-\emails\ttfamily
-$^{1,3}$\{giovanni.ciatto, roberta.calegari\}@unibo.it,
-$^{2}$matteo.castiglio@studio.unibo.it
+    Giovanni Ciatto
+    \and
+    Matteo Castigliò
+    \and
+    Roberta Calegari
+    \\
+    \affiliations
+    $^1$Departement of Computer Science and Engineering (DISI) %, Alma Mater Studiorum---Università di Bologna
+    \\
+    $^3$Alma Mater Research Institute for Human Centered AI (AlmaAI)
+    \\
+    $^{1,3}$Alma Mater Studiorum---Università di Bologna
+    \\
+    \emails\ttfamily
+    $^{1,3}$\{giovanni.ciatto, roberta.calegari\}@unibo.it,
+    $^{2}$matteo.castiglio@studio.unibo.it
 }
 
 \begin{document}
@@ -71,6 +65,7 @@ Finally, we discuss a number of snippets aimed at exemplifying the major benefit
 \section{Introduction}
 \label{sec:introduction}
 %---------------------------------------------------------------------------------------
+
 Symbolic and sub-symbolic artificial intelligence (AI) are complementary under a number of perspectives \cite{ilkou2020symbolic,xaisurvey-ia14}.
 %
 %The same is true for their major techniques, namely logic programming (LP) and neural networks (NN).
@@ -136,13 +131,21 @@ Dually, by supporting the training of neural networks from logic data, our API c
 \section{Logic library for ML: goals}\label{sec:goals}
 %----------------------------------------------------------------------------------------
 
-To properly design a logic library for dealing with hybrid reasoning, some basic goals to achieve should be taken into account: enable hybrid reasoning, full support of declarative ML, enable the exploitation of symbolic data sources (in addition to the others), make it possible to select a model via resolution.
+To properly design a logic library for dealing with hybrid reasoning, some basic goals to achieve should be taken into account: namely,
+%
+\begin{inlinelist}
+    \item enable hybrid reasoning,
+    \item full support of declarative ML,
+    \item enable the exploitation of symbolic data sources (in addition to the others),
+    \item make it possible to select a model via resolution.
+\end{inlinelist}
 %
 It is worth mentioning that, each one of these goals comes along with some of the benefits of hybridization, discussed in detail in \cite{xaisurvey-ia14}.
 %
 In the following details about these goals are discussed.
 
-\emph{Hybrid reasoning.}
+\paragraph{Hybrid reasoning}
+%
 Automatic reasoning may greatly benefit from sub-symbolic AI to overcome its inherent crispness.
 %
 Fuzzy data could then be suitably and coherently processed by a sub-symbolic predictor as part of a wider symbolic resolution process.
@@ -151,19 +154,20 @@ To make this possible, sub-symbolic predictors should be representable, trainabl
 %
 Consequently, logic programs should be endowed with ad-hoc predicates and syntactical categories, aimed at representing and manipulating sub-symbolic predictors and data.
 
-\emph{Declarative ML.} Declarative ML is a paradigm by which data scientists' code should only specify \emph{what} an ML workflow should do, by leaving the underlying platform in charge to understand \emph{how}.
+\paragraph{Declarative ML} Declarative ML is a paradigm by which data scientists' code should only specify \emph{what} an ML workflow should do, by leaving the underlying platform in charge to understand \emph{how}.
 %
-This is partially supported by the current practice of data science which relies on high-level languages (e.g. Python) and libraries of elementary components to be composed (e.g. Scikit-Learn).
+This is partially supported by the current practice of data science which relies on high-level languages (e.g. Python) and libraries of elementary components to be composed (e.g. Scikit-Learn by \citeay{scikit-learn}).
 %
 However, the solutions proposed so far do not leverage inherently declarative frameworks like LP, but rather object-oriented languages---requiring imperative statements.
 %
-To support the declarative expression of an ML workflow in the LP framework a new logic API is so required.
+Hence, to support the declarative expression of an ML workflow in the LP framework, a new logic API is required.
 %
 %This would be useful both from a logic and ML perspective.
 %%
 %In fact, it would pave the way towards the exploitation of ML within the LP community, other than providing data scientists with a way to describe their ML workflows in a formal and runnable way.
 
-\emph{Symbolic data sources.}
+\paragraph{Symbolic data sources}
+%
 Logic knowledge bases are a peculiar way of collecting knowledge.
 %
 Unlike datasets and DBMS, they represent information in symbolic form, via -- possibly \emph{intensional} -- logic formul\ae{}.
@@ -172,7 +176,8 @@ Hence, they can virtually represent any sort of datum -- be it atomic, compound 
 %
 Accordingly, when combining LP with ML, knowledge bases should be exploitable as data sources as well---other than ordinary CSV files or relational databases.
 
-\emph{Model selection via resolution.}
+\paragraph{Model selection via resolution}
+%
 Logic resolution essentially consists of a search procedure aimed at finding solutions in a proof tree.
 %
 This could be applied to a common step of any ML workflow---namely \emph{model selection}.
@@ -188,21 +193,30 @@ LP naturally captures the non-deterministic exploration of a space of possible c
 Hence it is well suited to both declaratively represent and implement model selection.
 
 %----------------------------------------------------------------------------------------
-\section{Logic API for ML: requirements}
+\section{ML: key aspects to be supported}
 \label{sec:requirements}
 %----------------------------------------------------------------------------------------
 
-To support the aforementioned goals, logic APIs must cover the full gamma of tasks involved in any possible ML workflow, detailed and discussed in the following.
+To support the aforementioned goals, logic APIs must cover the full gamma of aspects involved in any possible ML workflow, detailed and discussed in this section.
 
-%Briefly speaking, a ML workflow is the process of producing a suitable predictor for the available data and the learning task at hand, following the purpose of later exploiting that predictor to draw analyses or to drive decisions.
+Briefly speaking, a ML workflow is the process of producing a suitable predictor for the available data and the learning task at hand, following the purpose of later exploiting that predictor to draw analyses or to drive decisions.
 %%
 %Hence, any ML workflow is commonly described as composed by two major phases, namely training -- where predictors are fit on data -- and inference---where predictors are exploited.
 %%
 %However, in practice, further phases are included, such as data provisioning and preprocessing, as well as model selection and assessment.
 %%
-%Thus, from a coarse-grained perspective, a machine learning workflow can be conceived as composed by six major phases, detailed in the following.
+%
+Each ML workflow can be conceived as composed by six major phases -- elicited in \cref{ssec:ml-phases} --, each one involving a number of activities---elicited in \cref{ssec:modelling}.
+%
+Enumerating and defining all possible phases and activities is of paramount importance, as any API for ML should support them all.
 
-\emph{Dataset loading.}
+\subsection{ML phases}
+\label{ssec:ml-phases}
+
+From a coarse-grained perspective, a machine learning workflow is composed by six major phases, detailed in the following.
+
+\paragraph{Dataset loading}
+%
 %Provided that the data provisioning phase has resulted in a dataset -- roughly, a collection of homogenous data, often coming in the form of a single file, a folder or a database --,
 The first step of any ML workflow consists of loading that dataset in memory for later processing.
 %
@@ -214,7 +228,8 @@ Accordingly, the logic API for ML should expose ad-hoc \emph{predicates} to serv
 %
 Furthermore, however, it should also support the loading of datasets out of logic theories of facts and rules.
 
-\emph{Data pre-processing.}
+\paragraph{Data pre-processing}
+%
 Raw datasets are often inadequate to favour predictors' training.
 %
 Hence, dataset pre-processing is commonly practised to increase the effectiveness of any subsequent training phase.
@@ -231,8 +246,8 @@ Pre-processing most common bulk operations are:
 %
 In particular, the purpose \ref{preprocessing:partitioning} is of paramount importance, as it supports the \emph{test set separation} as well as splitting input-related columns from output-related ones---fundamental operation to enable validation and testing and to support training respectively.
 
-
-\emph{Predictor selection and definition.}
+\paragraph{Predictor selection and definition}
+%
 Many sorts of predictors could be used in principle to perform supervised learning---e.g. neural networks, decision trees, support vector machines, etc.
 %
 A preliminary phase to select the best predictor is a common phase in virtually any ML workflow.
@@ -263,7 +278,8 @@ In case hyper-parameters cannot be conveniently represented as raw logic types (
 
 %In the particular case of neural networks, ad-hoc predicates should be provided to construct layers, and activation functions, and to combine them to create arbitrarily complex network architectures.
 
-\emph{Training}
+\paragraph{Training}
+%
 Predictors' training plays a pivotal role in ML workflows.
 %
 This is the phase where predictors are fit on the available data or, in other words, automated learning actually occurs.
@@ -274,8 +290,9 @@ Once again, several ad-hoc predicates should be defined to support structured pa
 %
 Furthermore, regardless of its shape, the training predicate should accept some arguments aimed at specifying whether the columns of the training set should be considered as inputs or outputs.
 
-\emph{Exploitation}
-Exploitation is commonly the last phase of any ML workflow.
+\paragraph{Inference}
+%
+Inference is commonly the last phase of any ML workflow.
 %
 Here, trained predictors are used to draw predictions on new data---i.e. different data w.r.t. the training set.
 %
@@ -289,7 +306,8 @@ Ad-hoc predicates may be provided as well to explicitly model higher-level tasks
 %
 Finally, it should be possible to store, retrieve, and re-apply any pre-processing procedure possibly defined before training, to the raw data for which predictions should be drawn---in order to make it acceptable for the predictor as an input.
 
-\emph{Validation}
+\paragraph{Validation}
+%
 Validation is the \emph{penultimate} step of any ML workflow: it succeeds training and precedes exploitation.
 %
 It is here discussed as last because it technically relies on the capability of drawing predictions via trained predictors---which is treated in the paragraph above.
@@ -305,115 +323,119 @@ Many measures may be used to assess classifiers (e.g. accuracy, F1-score, etc.) 
 Hence, to support validation, the logic API for ML should provide predicates to compute each possible measure.
 
 %----------------------------------------------------------------------------------------
-\subsection{Analysis and Modelling}
+\subsection{ML activities, per phase}
 \label{ssec:modelling}
 %----------------------------------------------------------------------------------------
 
-%Here we analyse the ML domain w.r.t. our goals, and we elicit the most relevant entities and actions our logic API should support.
-%
-%In other words, we derive the meta-model leading the design, implementation, and usage of our logic API for ML.
+Here we elicit the many activities involved in each phase of any ML workflow, and we describe them from a computational perspective---i.e. in terms of the sorts entities (a.k.a. data types) they accept as input or produce as output (manipulate, for short).
 
-In this section we define the meta-model leading the design, implementation, and usage of our logic API for ML accordingly to the goals and the requirements discussed above.
+\paragraph{Entities}
 
-The entities to be considered in order to define the library meta-model are the entities that required to fully describe the ML workflow:
+We start our discussion by identifying the five major sorts of entities each activity may manipulate.
 %
 \begin{itemize}
 	\item \emph{Value:} a scalar, vectorial, matrix, or tensorial datum from a given domain (e.g. integer or real numbers, or vectors of integer or real numbers, as well as a string, a table, a time series, etc.).
 	%
-	\item\emph{Schema:} %per rappresentare il formato dei dati iniziale e dei dati processati.
-	a concise and formal description of a domain (i.e. a set of values).
+	\item \emph{Schema:} a concise and formal description of a domain (i.e. a set of values).
 	%
 	For scalar values, schemas are essentially data types (e.g. integers, reals, strings, etc.), while for non-scalar data they carry information about the name, index, and type of each single scalar component.
 	%
-	\item \emph{Dataset:} %per rappresentare il dataset iniziale, il dataset processato, il training set, il test set ed il validation set.
-	a collection of values matching a particular schema (supposed to be known).
+	\item \emph{Dataset:} a collection of values matching a particular schema (supposed to be known).
 	%
-	\item\emph{Transformation:} %per rappresentare una sequenza di operazioni di elaborazione.
-	any operation aimed at transforming an entity dataset into another other---commonly, a dataset into either another dataset (e.g. normalization, standardization, etc.) or a value (e.g. max, min, average, etc.)
+	\item \emph{Transformation:} any operation aimed at transforming an entity dataset into another other---commonly, a dataset into either another dataset (e.g. normalization, standardization, etc.) or a value (e.g. max, min, average, etc.)
 	%
 	From an algebraic perspective, it is a function.
 	%
 	From a computational perspective, it is an algorithm.
 	%
-	\item\emph{Predictor:} %per rappresentare il predittore nelle fasi di definizione, addestramento valutazione e uso
-	a stateful computational entity capable of
+	\item \emph{Predictor:} a stateful computational entity capable of
 	%
 	\begin{inlinelist}
 		\item drawing predictions (i.e. outputting values) out of (possibly unseen) input values, according to its internal state
 		\item updating its internal state according to a dataset (to improve future predictions)
 	\end{inlinelist}
 \end{itemize}
+%
+Any logic-based API for ML should support the representation, combination, and manipulation of entities of these kinds.
 
-Our logic API for ML supports the representation, combination, and manipulation of entities of these kinds.
-%
-%In particular, \cref{fig:fasi2} depicts the overall workflow, the specific activities therein contained, and the involved entities, from the user perspective.
-%
-Each phase of the ML workflow is characterised by a specific set of activities that should be declaratively representable in logic.
-%
-Accordingly, in the remainder of this section, following the ML workflow elicited in \cref{sec:requirements}, the activities the logic API should support -- along with the entities they operate upon -- are discussed.
+\paragraph{Activities}
 
-\emph{Dataset loading}
+Each phase of the ML workflow is then characterised by a specific set of activities possibly manipulating entities of any of these sorts.
+%
+A logic-based API for ML should support them as well.
+%
+Accordingly, in the remainder of this section, we describe such activities along with the entities they operate upon.
+%
+In doing so, we partition activities w.r.t. the ML phase they are most commonly exploited into.
+
+\subparagraph{Dataset loading}
+%
 The main activities to support the loading of a dataset into a solver's memory, and its preparation for subsequent processing are
 %
 \begin{itemize}
-    \item Dataset loading: operation of loading a dataset from either a value -- representing either a local or remote file --, or from a Prolog theory
-    \item Schema declaration:  operation of constructing a representation for a given schema
-    \item Target features declaration: operation of tagging a portion of features of some schema as either inputs or outputs (a.k.a. targets)
-    \item Dataset splitting: operation of horizontally partitioning a dataset into two or more smaller datasets.
+    \item \emph{Dataset loading:} operation of loading a dataset from either a value -- representing either a local or remote file --, or from a Prolog theory
+    \item \emph{Schema declaration:}  operation of constructing a representation for a given schema
+    \item \emph{Target features declaration:} operation of tagging a portion of the features of some schema as either inputs or outputs (a.k.a. targets)
+    \item \emph{Dataset splitting:} operation of horizontally partitioning a dataset into two or more smaller datasets.
 \end{itemize}
 
-\emph{Dataset pre-processing}
+\subparagraph{Dataset pre-processing}
 %
 Here, they may be willing to define transformations or cascades of transformations (pipelines, henceforth) to be eventually applied on datasets:
 %
 \begin{itemize}
-    \item Transformation declaration: operation of declaratively encoding a transformation operation to be applied to all data in a dataset
+    \item \emph{Transformation declaration:} operation of declaratively encoding a transformation operation to be applied to all data in a dataset
     %Such kinds of transformations can be modelled as functions accepting a dataset as input and producing a dataset as output
-    \item Pipeline composition: operation of declaratively constructing a composite transformation as a cascade of simpler transformations
-    \item Transformation application: operation of actually constructing a new dataset from a prior dataset and a transformation
+    \item \emph{Pipeline composition:} operation of declaratively constructing a composite transformation as a cascade of simpler transformations
+    \item \emph{Transformation application:} operation of actually constructing a new dataset from a prior dataset and a transformation
 \end{itemize}
 
-\emph{Predictor selection and definition.}
+\subparagraph{Predictor selection and definition}
+%
 The next phase involves the \emph{definition} of one or more predictors via a unique meta-activity, namely:
 %
 \begin{itemize}
-    \item Predictor declaration: operation of constructing a representation for a particular predictor, which implies choosing the predictor family and specifying actual values for its hyper parameters
+    \item \emph{Predictor declaration:} operation of constructing a representation for a particular predictor, which implies choosing the predictor family and specifying actual values for its hyper parameters
 \end{itemize}
 %%
 %Of course, as many families of predictors exist, and each one is characterised by its own set of formal hyper-parameters, many variant if this operation may eventually be defined in practice.
 
-\emph{Training.}
+\subparagraph{Training}
+%
 Eventually, declared predictors may enter the \emph{training} phase, meaning that their learning from data should be triggered.
 %
 This can be achieved via yet another activity, namely:
 %%
 \begin{itemize}
-    \item Predictor fitting w.r.t. a training set of data: operation of fitting a predictors' internal parameter on some provided training data
+    \item \emph{Predictor fitting w.r.t. a training set of data:} operation of fitting a predictors' internal parameter on some provided training data
 \end{itemize}
 %%
 %Again, given the variety of predictors available, this operation may come with several predictor specific variants accepting different learning parameters.
 
-\emph{Training.}
+\subparagraph{Inference}
+%
 Once in their \emph{inference} phase, trained predictors may eventually be exploited to be draw predictions.
 %%
 The corresponding activity is:
 %%
 \begin{itemize}
-    \item Predictor querying: operation where (possibly unseen) values are provided to some trained predictor as a query, and the resulting values are interpreted as predictions
+    \item \emph{Predictor querying:} operation where (possibly unseen) values are provided to some trained predictor as a query, and the resulting values are interpreted as predictions
 \end{itemize}
 
-\emph{Validation.}
+\subparagraph{Validation}
+%
 Finally, in the \emph{validation} phase, trained predictors should be assessed by measuring their performance w.r.t. some test data
 %
 This is yet another meta-activity, with several possible variants depending on the particular measure being exploited:
 %
 \begin{itemize}
-    \item Predictor scoring: operation of computing a scoring value out of a trained predictor, a test dataset, and a scoring function
+    \item \emph{Predictor scoring:} operation of computing a scoring value out of a trained predictor, a test dataset, and a scoring function
 \end{itemize}
 
 %----------------------------------------------------------------------------------------
 \section{\mllib{} Overview and Architecture}
 %----------------------------------------------------------------------------------------
+
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/layers.pdf}
