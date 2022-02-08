@@ -11,4 +11,5 @@ schema_name(iris).
 iris_schema(S) :- theory_to_schema(S).
 
 % dataset loading              
-iris_dataset(D) :- read_dataset('/path/to/iris.csv', csv, D).
+iris_dataset(D) :- 
+    read_dataset('/path/to/iris.csv', csv, D).

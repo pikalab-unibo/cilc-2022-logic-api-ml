@@ -450,10 +450,10 @@ The overall architecture is depicted in \cref{fig:layers}.
 The \mllib{} assumes a goal-oriented logic solver being in place, where ordinary logic programs can be executed.
 %
 Thanks to the \mllib{}, these logic programs may also exploit a number of predicates for training and using ML predictors---other than any other entity involved in the process.
-%
+
 In the backend, the library assumes an underlying object-oriented (OO) library providing high-level ML abstractions, such as datasets, predictors, and so on.
 %
-Examples of these libraries may be for instance Keras or \deeplearningforj{}.
+Examples of these libraries may be for instance Keras \cite{chollet2015keras} or \deeplearningforj{} \cite{DL4J}.
 %
 The OO library may in turn be backed by an optimizer taking care of making training and data management effective on the available hardware---and possibly exploiting hardware acceleration.
 %
@@ -465,7 +465,9 @@ For instance, targeting the JVM may imply \deeplearningforj{} to be exploited, w
 %
 However, while technological choices are contingent and subject to change, the overall architecture is meant to support the implementation of the \mllib{} as a façade towards the underlying OO library, regardless of what it is.
 
-At the functional level, the design of the \mllib{} is provided in terms of logic predicates acting on the above defined entities. Details about the predicates are discussed in the Appendix.
+At the functional level, the design of the \mllib{} is provided in terms of logic predicates acting on the above defined entities.
+%
+Details about the predicates are provided in the supplementary material.
 %
 \Cref{fig:design-overview} provides an overview of these predicates, grouped by entities.
 
@@ -481,7 +483,7 @@ At the functional level, the design of the \mllib{} is provided in terms of logi
 \label{sec:examples}
 %----------------------------------------------------------------------------------------
 
-In the following the usage of the \mllib{} to serve the purposes described in \cref{sec:goals} is discussed.
+Here we discuss the usage of the \mllib{} to serve the purposes described in \cref{sec:goals}.
 
 From an LP perspective, our examples assume the existence of a logic solver/language exploiting some implementation of the \mllib{}.
 %
@@ -489,34 +491,33 @@ For the sake of simplicity, we assume a Prolog solver is employed.
 %
 Examples consist of Prolog scripts, possibly involving standard Prolog predicates.
 
-From an ML perspective, our examples assume a very simple scenario where a neural-network classifier is trained on the well known Iris dataset\footnotemark.
+From an ML perspective, our examples assume a very simple scenario where a neural-network classifier is trained on the well known Iris dataset \cite{iris-dataset}.
 %
 The resulting NN is then exploited to write a simple hybrid predicate aimed at classifying unseen Iris instances.
-%
-\footnotetext{\url{https://archive.ics.uci.edu/ml/datasets/iris}}
 
 \paragraph{Declarative ML}
-Declarativity is a key benefit of our symbolic approach to ML.
+%
+Declarativeness is a key benefit of our symbolic approach to ML.
 %
 The \mllib{} supports declarative ML in several ways, as exemplified by listings \ref{lst:dataset-loading}, \ref{lst:pre-processing-pipeline}, \ref{lst:neural-network-declare}, and \ref{lst:training}.
 
- \lstinputlisting[
-        language=Prolog,
+%\begin{figure}
+    \prologimport[
+        captionpos=b,
         label={lst:dataset-loading},
         caption={Dataset loading from file}
     ]{listings/dataset-loading.pl}
     %
-    \lstinputlisting[
-        language=Prolog,
+    \prologimport[
         label={lst:pre-processing-pipeline},
         caption={Pre-processing pipeline}
     ]{listings/pre-processing-pipeline.pl}
     %
-    \lstinputlisting[
-        language=Prolog,
+    \prologimport[
         label={lst:neural-network-declare},
         caption={Neural network structure declaration}
     ]{listings/neural-network-declare.pl}
+%\end{figure}
 
 In particular, \cref{lst:dataset-loading} shows how the schema and data entries of the Iris dataset can be treated in logic.
 %
@@ -554,11 +555,9 @@ The resulting neural network predictor is then bound to the \pl{NN} output argum
 %
 So, for instance, a NN having 4 input neurons, 2 hidden layers with 5 and 7 neurons respectively, and 3 output neurons can be declared as follows:
 %
-{\footnotesize
-\begin{center}
-    \pl{multi\_layer\_perceptron(4,[5, 7],3,NN)}
-\end{center}
-}
+\begin{lp}
+    multi\_layer\_perceptron(4,[5, 7],3,NN)
+\end{lp}
 
 Finally, \cref{lst:training} declares an end-to-end ML workflow aimed at selecting and training the best NN architecture to tackle Iris classification.
 %
@@ -576,22 +575,14 @@ The script is assumed to replace \cref{lst:logic-dataset-loading} in those situa
 %
 Here, the \pl{iris\_dataset/1} attempts to load the data from the local theory instead of a file.
 
-\lstinputlisting[
+\prologimport[
     float,
-    language=Prolog,
     label={lst:logic-dataset-loading},
     caption={Dataset loading from the local theory}
 ]{listings/logic-dataset-loading.pl}
 
 \paragraph{Model selection via resolution}
-
-%RC: questo listting va assolutamente ridotto, serve tutta sta roba?
-\lstinputlisting[
-    float,
-    language=Prolog,
-    label={lst:training},
-    caption={ML workflow declarative description for selecting the best hyper and learning parameters for a NN}
-]{listings/training.pl}
+\label{par:model-selection}
 
 The automatic exploration of a search space subtended by logic resolution could be exploited to perform model selection.
 %
@@ -599,7 +590,17 @@ Indeed, model selection essentially consists of an exploration of the hyper and 
 
 Accordingly, the \mllib{} supports expressing and performing model selection in logic (\cref{lst:training}).
 %
-There hyper, learning and workflow parameters are expressed as logic facts, and the \pl{params/2} predicate is defined to enumerate all possible combinations of theirs---e.g. via Prolog's backtracking mechanism.
+%\medskip
+\prologimport[
+%    float,
+%    captionpos=b,
+    linewidth=1.07\linewidth,
+    label={lst:training},
+    caption={[Declarative description of a ML workflow]Declarative description of a ML workflow aimed at selecting the best hyper and learning parameters for a NN classifier. Ancillary predicates invoked in this snippet are reported in the supplementary material.}
+]{listings/training.pl}
+\bigskip
+%
+There hyper, learning, and workflow parameters are expressed as logic facts, and the \pl{params/2} predicate is defined to enumerate all possible combinations of theirs---e.g. via Prolog's backtracking mechanism.
 %
 The \pl{model\_selection/5} predicate is in charge of stepping through all such parameters with the purpose of selecting, and training all corresponding NN predictors which attain a sufficiently high predictive performance---denoted by the \pl{target\_performance/1} fact.
 %
@@ -620,31 +621,20 @@ The predicate \pl{model\_selection/5} works by
 %
 In other words, the \pl{model\_selection/5} represents a declarative, and pretty general, workflow for model selection---which may be adapted to other supervised learning tasks with minimal changes.
 %
-%It relies on a number of predicates declaring some particular steps of the workflow and exemplifying many \mllib{} functionalities.
-%%
-%These are reported in \cref{lst:training} as well.
-%%
-%For instance, \pl{train\_cv/4} is in charge of performing 10-fold CV on a given \pl{Dataset}, to assess a given \pl{HyperParams}--\pl{LearnParams} combination, to then compute the \pl{AveragePerformance} of the 10 predictors constructed in this way.
-%%
-%Every single fold of a \pl{K}-fold CV process is managed by the \pl{train\_cv\_fold/5} predicate, which in turn exploits \pl{train\_validate/5} predicate to train and validate every single predictor.
-%%
-%Finally, the \pl{test/3} predicate can be exploited to either test or validate a predictor depending on whether the test or validation set is provided as an argument.
+Further details about the many predicates exploited in this example are provided in the supplementary material.
 
 Under these hypotheses, a model selection workflow for the Iris dataset may be triggered via a concise logic query such as:
 %
-{\footnotesize
-\begin{center}
-    \pl{?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, P, \_, A).}
-\end{center}
-}
+\begin{lp}
+    ?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, P, \_, A).
+\end{lp}
 %
 If all aspects of the model selection workflow are correctly declared, the query provide multiple successful solutions corresponding to all trained predictors (\pl{P}) and their test-set accuracies (\pl{A}).
 
 \paragraph{Hybrid reasoning}
 
-\lstinputlisting[
+\prologimport[
     float,
-    language=Prolog,
     label={lst:hybrid-predictor},
     caption={Exploitation of the NN classifier trained in \cref{lst:training} to create an hybrid predicate} %-- namely \pl{iris/5} -- aimed at classifying Iris flowers}
 ]{listings/hybrid-predictor.pl}
@@ -657,11 +647,9 @@ The script assumes a fact of the form \pl{iris\_nn(N, T)} is available into the 
 %
 Such assumption may be satisfied, in Prolog, by a query such as the following one:
 %
-{\footnotesize
-\begin{center}
-    \pl{?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, N, T, \_), !, assert(iris\_nn(N, T)).}
-\end{center}
-}
+\begin{lp}
+    ?- iris\_dataset(D), iris\_schema(S), model\_selection(D, S, N, T, \_), !, assert(iris\_nn(N, T)).
+\end{lp}
 %
 which selects and trains a single NN and stores it into the solver's dynamic KB.
 
@@ -673,9 +661,8 @@ The prediction is then converted into a class constant -- via the \pl{classify/4
 
 It is worth to be highlighted that, from the caller perspective, the \pl{iris/5} described so far is indistinguishable from a purely symbolic predicate serving the same purpose (i.e., Iris classification) and having the same name and arity---such as the one described in \cref{lst:symbolic-predictor}.
 
-\lstinputlisting[
+\prologimport[
     float,
-    language=Prolog,
     label={lst:symbolic-predictor},
     caption={A purely symbolic classifier for Iris flowers, functionally equivalent to the hybrid one from \cref{lst:hybrid-predictor}}
 ]{listings/symbolic-predictor.pl}
@@ -742,22 +729,22 @@ The second thread concerns the extensions of the \mllib{}, which should be event
 \bibliographystyle{kr}
 \bibliography{bibliography}
 
-\pagebreak
+\newpage
 
-\section*{Appendix}
+\appendix
 
-\subsection*{Realising the API: \mllib{} Design}
+\section{Supplementary Material}
+
+\subsection{Realising the API: \mllib{} Design}
 \label{sec:project}
 
 %
 %Both in the figure and in
 In the reminder of this section, we adopt the following notation to denote the interfaces of logic predicates:
 %
-{\footnotesize
-\begin{center}
-    \pl{functor($\odot_1$ Name$_1$: \pli{type}$_1$, \ldots, $\odot_N$ Name$_N$: \pli{type}$_N$)}
-\end{center}
-}
+\begin{lp}
+    functor($\odot_1$ Name$_1$: \pli{type}$_1$, \ldots, $\odot_N$ Name$_N$: \pli{type}$_N$)
+\end{lp}
 %
 where $N$ denotes the arity of predicate \pl{functor/$N$}, whose $i^{th}$ argument -- named \pl{Name$_i$} -- must be of type \pli{type$_i$}, and it must be considered as an input or output parameter depending on the mode indicator\footnotemark $\odot_i$.
 %
@@ -792,8 +779,7 @@ In the general case, schema declarations are firstly provided by the user in cla
 %
 This requires the user to fill the logic theory with clauses of the form:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{attribute($1$, $N_1$, $T_1$).}
         \\
@@ -809,8 +795,7 @@ This requires the user to fill the logic theory with clauses of the form:
         \\
         \pl{schema\_targets([$N_j$, $N_k$, $\ldots$, $N_h$]).}
     \end{tabular}
-\end{center}
-}
+\end{lp}
 %
 where $N$ is the name of the schema, and $n$ is the total amount of attributes declared for that schema, while $N_i$ is the name of the $i^{th}$ attribute, and $T_i$ is its type.
 %
@@ -820,8 +805,7 @@ While attribute ($N_i$) and schema ($N$) names are simple atoms, attribute types
 
 The \pl{attribute\_type/1} predicate is defined as follows:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{attribute\_type(\pli{string}).}
         \\
@@ -835,9 +819,7 @@ The \pl{attribute\_type/1} predicate is defined as follows:
         \\
         \pl{attribute\_type(\pli{ordinal}([\_ | \_])).}
     \end{tabular}
-\end{center}
-
-}
+\end{lp}
 %
 Hence, admissible attribute types involve infinite domains such as the numeric (either integer or real numbers), and strings ones, as well as finite domains such as booleans, and categorical (i.e. unordered) or ordinal sets of constant values.
 
@@ -847,9 +829,9 @@ To be exploitable by the underlying OO library, schemas must be represented as o
 %
 Schemas represented in clausal form can be converted into object form via the following predicate:
 %
-\begin{center}
-    \pl{theory\_to\_schema(-Schema: \pli{ref})}
-\end{center}
+\begin{lp}
+    theory\_to\_schema(-Schema: \pli{ref})
+\end{lp}
 %
 which
 %
@@ -868,11 +850,9 @@ A part from schema declaration or creation, other relevant operations over schem
 %
 This can be achieved via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{schema(?Schema: \pli{ref}, ?Name: \pli{atom}, ?Attributes: \pli{list}, ?Targets: \pli{list})}
-\end{center}
-}
+\begin{lp}
+    schema(?Schema: \pli{ref}, ?Name: \pli{atom}, ?Attributes: \pli{list}, ?Targets: \pli{list})
+\end{lp}
 %
 Given a schema reference, the predicate retrieves
 %
@@ -904,11 +884,9 @@ These may be local or remote files -- commonly in ``comma separated values'' (CS
 %
 The \mllib{} provides a unique entry point to load a dataset from any data source, namely:
 %
-{\footnotesize
-\begin{center}
-    \pl{read\_dataset(+Location: \pli{atom}, +SourceType: \pli{atom}, -Dataset: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    read\_dataset(+Location: \pli{atom}, +SourceType: \pli{atom}, -Dataset: \pli{ref})
+\end{lp}
 %
 This predicate aims at loading the dataset from a given \pl{Location}---be it a path on the local filesystem, a URL referencing some remote resource, or a connection string for some DBMS.
 %
@@ -925,13 +903,13 @@ Regardless of the particular location and source type, the behaviour of the \pl{
 
 Admissible values for the \pl{SourceType} parameter are determined by the \pl{source\_type/1} predicate, defined as follows:
 %
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{source\_type(\pli{csv}).}
         %        \\
         %        \pl{source\_type(\pli{jdbc}).}
     \end{tabular}
-\end{center}
+\end{lp}
 %
 meaning that currently the \mllib{} only supports data provisioning from CSV files.
 %
@@ -947,8 +925,7 @@ When this is the case, the theory should contain not only the clauses describing
 %
 In particular, the \mllib{} expects data entries to be provided as clauses of the form:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{c}
         \pl{$N$(X$_{1,1}$, \ldots, X$_{1,j}$, \ldots, X$_{1,n}$).}
         \\
@@ -960,8 +937,7 @@ In particular, the \mllib{} expects data entries to be provided as clauses of th
         \\
         \pl{$N$(X$_{m,1}$, \ldots, X$_{m,j}$, \ldots, X$_{m,n}$).}
     \end{tabular}
-\end{center}
-}
+\end{lp}
 %
 where $N$ is the schema name declared via \pl{schema\_name/1}, and \pl{X$_{i,j}$} is the value of the $j^{th}$ attribute of the $i^{th}$ data entry.
 %
@@ -971,11 +947,9 @@ Datasets in clausal form must be converted into object form to be exploitable by
 %
 This can be achieved via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{theory\_to\_dataset(+SchemaName: \pli{atom}, -Dataset: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    theory\_to\_dataset(+SchemaName: \pli{atom}, -Dataset: \pli{ref})
+\end{lp}
 %
 which
 %
@@ -1001,11 +975,9 @@ Conversions from and into clausal form complete the picture.
 
 To support test set separation, the \mllib{} provides a predicate to randomly split a dataset into a training and test set, given a ratio:
 %
-{\footnotesize
-\begin{center}
-    \pl{random\_split(+Dataset: \pli{ref}, +Ratio: \pli{real}, -Train: \pli{ref}, -Test: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    random\_split(+Dataset: \pli{ref}, +Ratio: \pli{real}, -Train: \pli{ref}, -Test: \pli{ref})
+\end{lp}
 %
 Given a reference to a \pl{Dataset} in object form, and a \pl{Ratio} -- i.e. a real number in the range $]0,1[$ --, the predicate
 %
@@ -1019,11 +991,9 @@ So, for instance, a ratio of $0.1$ would randomly split the dataset into a train
 
 To support cross validation, \mllib{} provides an \textit{ad-hoc} predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{fold(+Dataset: \pli{ref}, +K: \pli{integer}, -Train: \pli{ref}, -Validation: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    fold(+Dataset: \pli{ref}, +K: \pli{integer}, -Train: \pli{ref}, -Validation: \pli{ref})
+\end{lp}
 %
 which splits the \pl{Dataset} into 2 partitions, namely \pl{Train} and \pl{Validation}, the former containing $\frac{k-1}{k}$\% data entries -- to be used as the training set --, and the latter containing the remaining $\frac{1}{k}$\% data entries---to be used as the validation set.
 %
@@ -1037,8 +1007,7 @@ Hence, provided that $\pl{K} \geq 2$, the predicate computes \pl{K} partitioning
 
 The \mllib{} supports accessing the information encapsulated into a dataset in object form via three predicates, namely:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{row(+Dataset: \pli{ref}, ?Index: \pli{integer},}\\
         \pl{-Values: \pli{list}).}
@@ -1050,8 +1019,7 @@ The \mllib{} supports accessing the information encapsulated into a dataset in o
         \pl{\pli{integer},  ?Attribute: \pli{integer}|\pli{atom}, }\\
         \pl{-Values: \pli{list}).}
     \end{tabular}
-\end{center}
-}
+\end{lp}
 %
 They are all non-deterministic, and they both support the retrieval of a particular row / column / cell from the dataset as well as the enumeration of all possible rows / columns / cells from that dataset.
 
@@ -1077,10 +1045,9 @@ The logic programmer may also be willing to convert a dataset in object form int
 %
 This can be attained via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{theory\_from\_dataset(+Schema: \pli{ref}, +Dataset: \pli{ref})}
-\end{center}}
+\begin{lp}
+    theory\_from\_dataset(+Schema: \pli{ref}, +Dataset: \pli{ref})
+\end{lp}
 %
 Given the references to both a dataset and its schema in object form, the predicate populates the solver's \emph{dynamic} KB with the a number of clauses representing the dataset and its schema in the clausal form described above.
 
@@ -1125,10 +1092,9 @@ Differently from schemas and datasets, for which the \mllib{} supports both clau
 
 To support aims \ref{tr:create} and \ref{tr:get-schema}, the \mllib{} provides the following \emph{bi-directional} predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{schema\_transformation(?Schema: \pli{ref}, ?Transformation: \pli{ref})}
-\end{center}}
+\begin{lp}
+    schema\_transformation(?Schema: \pli{ref}, ?Transformation: \pli{ref})
+\end{lp}
 %
 which changes its behaviour depending on which arguments are instantiated.
 
@@ -1150,11 +1116,9 @@ Each predicate is in charge of creating a composite transformation by appending 
 
 In the general case, the combination and creation of transformations is attained via predicates of the form:
 %
-{\footnotesize
-\begin{center}
-    \pl{$\langle \mathit{name} \rangle$(+Pipeline$_{in}$: \pli{ref}, +$A_1$, \ldots, +$A_n$, -Pipeline$_{out}$: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    $\langle \mathit{name} \rangle$(+Pipeline$_{in}$: \pli{ref}, +$A_1$, \ldots, +$A_n$, -Pipeline$_{out}$: \pli{ref})
+\end{lp}
 %
 where $\langle \mathit{name} \rangle$ is the name of the transformation being appended to \pl{Pipeline$_{in}$}, while $A_1, \ldots, A_n$ are transformation-specific parameters, and \pl{Pipeline$_{out}$} is the output parameter to which the newly created transformation is bound.
 
@@ -1164,8 +1128,7 @@ These are \pl{normalize/3}, \pl{one\_hot\_encoding/3}, and \pl{attributes\_delet
 %
 Here we focus on the overall design which is aimed at supporting the declaration of \emph{pipelines} of transformations, via conjunctions of goals:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{theory\_to\_schema(OriginalSchema),}
         \\
@@ -1179,8 +1142,7 @@ Here we focus on the overall design which is aimed at supporting the declaration
         \\
         \pl{schema\_transformation(FinalSchema, T$_m$)}
     \end{tabular}
-\end{center}
-}
+\end{lp}
 %
 Following this convention, logic programmers may declaratively construct the pipeline of transformations to be applied to \pl{OriginalSchema} to produce \pl{FinalSchema}, in such a way that each variable \pl{T$_i$}, for $i \in \{0, \ldots, m\}$ is bound to an object summarising all transformation steps from $0$ to $i$.
 
@@ -1192,10 +1154,9 @@ Such kind of transformations may alter the dataset while leaving its schema unaf
 %
 A normalization transformation can be created via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{normalize(+Pipeline$_{in}$: \pli{ref}, +Attributes: \pli{list}|\pli{atom}, -Pipeline$_{out}$: \pli{ref})}
-\end{center}}
+\begin{lp}
+    normalize(+Pipeline$_{in}$: \pli{ref}, +Attributes: \pli{list}|\pli{atom}, -Pipeline$_{out}$: \pli{ref})
+\end{lp}
 %
 There, parameter \pl{Attributes} must be bound to either a list of attribute names or indexes -- denoting the columns to be normalized --, or the `\pl{all}' atom---denoting a situation where all columns should be normalized.
 
@@ -1207,11 +1168,9 @@ Such kind of transformations alter both the dataset and its schema.
 %
 A OHE transformation can be created via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{one\_hot\_encode(+Pipeline$_{in}$: \pli{ref}, +Attributes: \pli{list}|\pli{atom}, -Pipeline$_{out}$: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    one\_hot\_encode(+Pipeline$_{in}$: \pli{ref}, +Attributes: \pli{list}|\pli{atom}, -Pipeline$_{out}$: \pli{ref})
+\end{lp}
 %
 There, parameter \pl{Attributes} must be bound to a list of attribute names or indexes denoting the columns to be one-hot encoded.
 
@@ -1223,11 +1182,9 @@ Such kind of transformations alter both the dataset and its schema.
 %
 An attribute deletion transformation can be created via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{one\_hot\_encode(+Pipeline$_{in}$: \pli{ref}, +Attributes: \pli{list}|\pli{atom}, -Pipeline$_{out}$: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    one\_hot\_encode(+Pipeline$_{in}$: \pli{ref}, +Attributes: \pli{list}|\pli{atom}, -Pipeline$_{out}$: \pli{ref})
+\end{lp}
 %
 There, parameter \pl{Attributes} must be bound to a list of attribute names or indexes denoting the columns to be dropped.
 
@@ -1235,10 +1192,9 @@ There, parameter \pl{Attributes} must be bound to a list of attribute names or i
 
 To support aim \ref{tr:fit}, the \mllib{} provides the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{fit(+Transformation$_{in}$: \pli{ref}, +Dataset: \pli{ref}, -Transformation$_{out}$: \pli{ref})}
-\end{center}}
+\begin{lp}
+    fit(+Transformation$_{in}$: \pli{ref}, +Dataset: \pli{ref}, -Transformation$_{out}$: \pli{ref})
+\end{lp}
 %
 which works by tuning \pl{Transformation$_{in}$} over \pl{Dataset}, producing a new transformation, whose reference is unified with \pl{Transformation$_{out}$}.
 
@@ -1252,10 +1208,9 @@ Fitting a composite transformation of course has the effect of fitting all its c
 
 Finally, to support aim \ref{tr:transform}, the \mllib{} provides the following \emph{bi-directional} predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{transform(?Data$_{in}$: \pli{ref}|\pli{compound}, +Transformation: \pli{ref}, ?Data$_{out}$: \pli{ref}|\pli{compound})}
-\end{center}}
+\begin{lp}
+    transform(?Data$_{in}$: \pli{ref}|\pli{compound}, +Transformation: \pli{ref}, ?Data$_{out}$: \pli{ref}|\pli{compound})
+\end{lp}
 %
 which can either apply a transformation or its inverse depending on either entire datasets or their rows, depending on how arguments are passed.
 
@@ -1285,11 +1240,9 @@ Notably, as for transformations, the \mllib{} assumes predictors to be represent
 
 The \mllib{} constrains predictor-creating predicates to comply to the following syntactical convention:
 %
-{\footnotesize
-\begin{center}
-    \pl{$\langle \mathit{name} \rangle$(+$H_1$, \ldots, +$H_n$, -Predictor: \pli{ref})}
-\end{center}
-}
+\begin{lp}
+    $\langle \mathit{name} \rangle$(+$H_1$, \ldots, +$H_n$, -Predictor: \pli{ref})
+\end{lp}
 %
 where $\langle \mathit{name} \rangle$ is the name of the predictor type being instantiated, while $H_1, \ldots, H_n$ are predictor-type-specific hyper-parameters, and \pl{Predictor} is the output parameter to which the newly created predictor is bound.
 
@@ -1299,10 +1252,9 @@ The \mllib{} currently supports one predicate of this sort -- namely, the \pl{ne
 
 Regardless of their nature, predictors can be trained on data via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{train(+Predictor$_{in}$: \pli{ref}, +Dataset: \pli{ref}, +Params: \pli{list}, -Predictor$_{out}$: \pli{ref})}
-\end{center}}
+\begin{lp}
+    train(+Predictor$_{in}$: \pli{ref}, +Dataset: \pli{ref}, +Params: \pli{list}, -Predictor$_{out}$: \pli{ref})
+\end{lp}
 %
 The predicate accepts \pl{Predictor$_{in}$} as the predictor to be trained, the \pl{Dataset} it should be trained upon, and a list of predictor-specific \pl{Params}.
 %
@@ -1316,10 +1268,9 @@ The \pl{Params} argument of \pl{train/4} must be instantiated with a list of lea
 %
 In the general case, each parameter is a term of the form:
 %
-{\footnotesize
-\begin{center}
-    \pl{$\langle \mathit{name} \rangle$($\langle \mathit{value} \rangle$)}
-\end{center}}
+\begin{lp}
+    $\langle \mathit{name} \rangle$($\langle \mathit{value} \rangle$)
+\end{lp}
 %
 where $\langle \mathit{name} \rangle$ is a functor describing the purpose of the parameter, while $\langle \mathit{value} \rangle$ is an arbitrary term acting as value for the parameter.
 
@@ -1342,10 +1293,9 @@ Other sorts of learning parameters may be added to the \mllib{}, targeting both 
 
 Regardless of their nature, \emph{trained} predictors can be exploited to draw predictions from data -- e.g. from a whole dataset or a single row --, via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{predict(+Predictor: \pli{ref}, +InputData: \pli{ref}|\pli{compound}, -Prediction: \pli{ref}|\pli{compound})}
-\end{center}}
+\begin{lp}
+    predict(+Predictor: \pli{ref}, +InputData: \pli{ref}|\pli{compound}, -Prediction: \pli{ref}|\pli{compound})
+\end{lp}
 %
 The predicate accepts a \pl{Predictor} (which must have been previously trained via \pl{train/4}), and some \pl{InputData} -- which may either be reference to a dataset object, or a compound term denoting a single row --, and uses the \pl{Predictor} to compute a prediction for each data entry in \pl{InputData}.
 %
@@ -1375,23 +1325,21 @@ Otherwise, if classes can overlap, one choose a confidence threshold $\theta$ an
 
 The \mllib{} supports classification out of regressors via the following predicate:
 %
-{\footnotesize
-\begin{center}
-    \pl{classify(+Prediction: \pli{ref}|\pli{compound}, +Strategy: \pli{compound}, +Classes: \pli{list}, -Classification: \pli{ref}|\pli{compound})}
-\end{center}}
+\begin{lp}
+    classify(+Prediction: \pli{ref}|\pli{compound}, +Strategy: \pli{compound}, +Classes: \pli{list}, -Classification: \pli{ref}|\pli{compound})
+\end{lp}
 %
 which accepts a \pl{Prediction} computed via \pl{predict/3} -- be it a single row or a whole dataset --, a classification \pl{Strategy}, a list of \pl{Classes}, and an output parameter, \pl{Classification}, which is bound to a container for as many categorical predictions as in \pl{Prediction}.
 
 Notably, while the \pl{Classes} parameter must consist of a list of (at least 2) class names, admissible values for the \pl{Strategy} parameter are determined by the \pl{classification/1} predicate, defined as follows:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{classification(\pli{argmax}).}
         \\
         \pl{classification(\pli{threshold}(Th)) :- numeric(Th).}
     \end{tabular}
-\end{center}}
+\end{lp}
 %
 meaning that currently the \mllib{} only supports classification via the $\mathtt{argmax}$ or threshold-based strategies---despite further strategies may be added following the same syntactical notation.
 
@@ -1403,10 +1351,9 @@ Several scoring functions can be used to serve this purpose, like, for instance 
 
 The \mllib{} supports assessing a predictor via a number of predicates following the same syntactical convention:
 %
-{\footnotesize
-\begin{center}
-    \pl{$\langle \mathit{name} \rangle$(+Actual: \pli{ref}|\pli{list}, +Expected: \pli{ref}|\pli{list}, -Score: \pli{real})}
-\end{center}}
+\begin{lp}
+    $\langle \mathit{name} \rangle$(+Actual: \pli{ref}|\pli{list}, +Expected: \pli{ref}|\pli{list}, -Score: \pli{real})
+\end{lp}
 %
 where $\langle \mathit{name} \rangle$ is the name of the scoring function of choice, \pl{Actual} is either a dataset or a list containing the actual predictions produced by the predictor under assessment, \pl{Actual} is either a dataset or a list containing the test data, and \pl{Score} is the output parameter to be unified with the score value computed whenever the predicate is executed.
 
@@ -1431,10 +1378,9 @@ Hence, a NN's hyper-parameters should provide information about such aspects.
 
 The \mllib{} provides the following predicate to construct NN-like predictors:
 %
-{\footnotesize
-\begin{center}
-    \pl{neural\_network(+Topology: \pli{ref}, -Predictor: \pli{ref})}
-\end{center}}
+\begin{lp}
+    neural\_network(+Topology: \pli{ref}, -Predictor: \pli{ref})
+\end{lp}
 %
 There, \pl{Topology} is a reference to an object describing the overall architecture of the network, and, in particular its layers.
 
@@ -1450,17 +1396,11 @@ The \mllib{} supports the declaration of layered architectures similarly to how 
 %
 There are two major sorts of predicates to serve this purpose:
 %
-{\footnotesize
-\begin{center}
-    \begin{tabular}{l}
-        \pl{input\_layer(+Size: \pli{integer}, -Layer:} \\
-        \pl{\pli{ref}).}
-        \\
-        \pl{$\langle type \rangle$\_layer(+Previous: \pli{ref}, +Size:}\\
-        \pl{ \pli{integer}, +Activation: \pl{ref}, -Layer:}\\
-        \pl{ \pli{ref}).}
-    \end{tabular}
-\end{center}}
+\begin{lp}
+    \pl{input\_layer(+Size: \pli{integer}, -Layer: \pli{ref}).}
+    \\\medskip
+    \pl{$\langle type \rangle$\_layer(+Previous: \pli{ref}, +Size: \pli{integer}, +Activation: \pl{ref}, -Layer: \pli{ref}).}
+\end{lp}
 
 The former predicate, \pl{input\_layer/2}, aims at creating a \pl{Layer} of a given \pl{Size}.
 %
@@ -1488,8 +1428,7 @@ Conversely, layers declared via the \pl{output\_layer/4} predicate -- again matc
 
 So, for instance, an ordinary multi-layered perceptron (MLP) composed by 1 input layer with 4 neurons, 1 hidden layer with 7 neurons, and 1 output layer with 3 neurons, where all neurons exploit the sigmoid activation function, can be declared as follows:
 %
-{\footnotesize
-\begin{center}
+\begin{lp}
     \begin{tabular}{l}
         \pl{input\_layer(4, I),}
         \\
@@ -1499,7 +1438,7 @@ So, for instance, an ordinary multi-layered perceptron (MLP) composed by 1 input
         \\
         \pl{neural\_network(O, NN)}
     \end{tabular}
-\end{center}}
+\end{lp}
 %
 There variable \pl{I} is bound to the input layer, variable \pl{H} is bound to the hidden layer, and \pl{O} is bound to the output layer, whereas \pl{NN} is bound to a MLP predictor whose architecture comprehends \pl{I}, \pl{H}, and \pl{O}.
 
@@ -1511,7 +1450,7 @@ Indeed, all layer-creating predicates of the form \pl{$\langle type \rangle$\_la
 %
 Admissible activation functions are regulated by the \pl{activation/1} predicate, defined below:
 %
-{\footnotesize
+\begin{lp}
     \begin{tabular}{l}
         \pl{activation(\pli{identity}).}  \\
         	\qquad denoting $f(x) = x$
@@ -1525,11 +1464,29 @@ Admissible activation functions are regulated by the \pl{activation/1} predicate
         \pl{activation(\pli{relu}).} \\
         \qquad denoting $f(x) = \mathit{max}(0, x)$
     \end{tabular}
-}
+\end{lp}
 
 while others may be possibly added.
 
+\section{Model selection: further details}
+\label{app:model-selection}
 
+The model selection example discussed in \cref{par:model-selection} and formally described in \cref{lst:training} relies upon a number of ancillary predicates declaring some particular steps of the workflow and exemplifying many \mllib{} functionalities.
+%
+These are reported in \cref{lst:training-ancillary}.
+%
+For instance, \pl{train\_cv/4} is in charge of performing 10-fold CV on a given \pl{Dataset}, to assess a given \pl{HyperParams}--\pl{LearnParams} combination, to then compute the \pl{AveragePerformance} of the 10 predictors constructed in this way.
+%
+Every single fold of a \pl{K}-fold CV process is managed by the \pl{train\_cv\_fold/5} predicate, which in turn exploits \pl{train\_validate/5} predicate to train and validate every single predictor.
+%
+Finally, the \pl{test/3} predicate can be exploited to either test or validate a predictor depending on whether the test or validation set is provided as an argument.
+
+\bigskip
+
+\prologimport[
+    label={lst:training-ancillary},
+    caption={[Ancillary predicates used in \cref{lst:training}]Ancillary predicates used in \cref{lst:training}. Each predicate denotes one particular step of a model selection workflow}
+]{listings/training-ancillary.pl}
 
 \end{document}
 
