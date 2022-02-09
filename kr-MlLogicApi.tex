@@ -976,22 +976,14 @@ Notably, the \pl{fold/2} is non-deterministic as it enumerates all possible fold
 Hence, provided that $\pl{K} \geq 2$, the predicate computes \pl{K} partitioning of the original dataset.
 
 \subparagraph{Data access}
-
+%
 The \mllib{} supports accessing the information encapsulated into a dataset in object form via three predicates, namely:
 %
-\begin{lp}
-    \begin{tabular}{l}
-        \pl{row(+Dataset: \pli{ref}, ?Index: \pli{integer},}\\
-        \pl{-Values: \pli{list}).}
-        \\
-        \pl{column(+Dataset: \pli{ref}, ?Attribute:} \\
-        \pl{{\pli{integer}|\pli{atom}, -Values: \pli{list}).}}
-        \\
-        \pl{cell(+Dataset: \pli{ref}, ?Index:}\\
-        \pl{\pli{integer},  ?Attribute: \pli{integer}|\pli{atom}, }\\
-        \pl{-Values: \pli{list}).}
-    \end{tabular}
-\end{lp}
+\begin{lplist}
+    \item row(+Dataset: \pli{ref}, ?Index: \pli{integer}, -Values: \pli{list}).
+    \item column(+Dataset: \pli{ref}, ?Attribute: \pli{integer}|\pli{atom}, -Values: \pli{list}).
+    \item cell(+Dataset: \pli{ref}, ?Index: \pli{integer},  ?Attribute: \pli{integer}|\pli{atom}, -Values: \pli{list}).
+\end{lplist}
 %
 They are all non-deterministic, and they both support the retrieval of a particular row / column / cell from the dataset as well as the enumeration of all possible rows / columns / cells from that dataset.
 
@@ -1368,11 +1360,10 @@ The \mllib{} supports the declaration of layered architectures similarly to how 
 %
 There are two major sorts of predicates to serve this purpose:
 %
-\begin{lp}
-    \pl{input\_layer(+Size: \pli{integer}, -Layer: \pli{ref}).}
-    \\\medskip
-    \pl{$\langle type \rangle$\_layer(+Previous: \pli{ref}, +Size: \pli{integer}, +Activation: \pl{ref}, -Layer: \pli{ref}).}
-\end{lp}
+\begin{lplist}
+    \item input\_layer(+Size: \pli{integer}, -Layer: \pli{ref}).
+    \item $\langle type \rangle$\_layer(+Previous: \pli{ref}, +Size: \pli{integer}, +Activation: \pl{ref}, -Layer: \pli{ref}).
+\end{lplist}
 
 The former predicate, \pl{input\_layer/2}, aims at creating a \pl{Layer} of a given \pl{Size}.
 %
@@ -1424,20 +1415,20 @@ Admissible activation functions are regulated by the \pl{activation/1} predicate
 %
 \begin{lp}
     \begin{tabular}{l}
-        \pl{activation(\pli{identity}).}  \\
-        	\qquad denoting $f(x) = x$
+        \pl{activation(\pli{identity}).}
+        	\quad {\normalfont denoting} $f(x) = x$
         \\
-        \pl{activation(\pli{sigmoid}).} \\
-        \qquad denoting $f(x) = 1/(1+e^{-x})$
+        \pl{activation(\pli{sigmoid}).}
+            \quad {\normalfont denoting} $f(x) = 1/(1+e^{-x})$
         \\
-        \pl{activation(\pli{tanh}).} \\
-        \qquad denoting $f(x) = \mathit{tanh}(x)$
+        \pl{activation(\pli{tanh}).}
+            \quad {\normalfont denoting} $f(x) = \mathit{tanh}(x)$
         \\
-        \pl{activation(\pli{relu}).} \\
-        \qquad denoting $f(x) = \mathit{max}(0, x)$
+        \pl{activation(\pli{relu}).}
+            \quad {\normalfont denoting} $f(x) = \mathit{max}(0, x)$
     \end{tabular}
 \end{lp}
-
+%
 while others may be possibly added.
 
 \section{Model selection: further details}
