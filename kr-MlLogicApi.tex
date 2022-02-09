@@ -57,7 +57,7 @@
 
 In this paper we address the problem of hybridising symbolic and sub-symbolic approaches in artificial intelligence, following the purpose of creating flexible and data-driven systems, which are simultaneously comprehensible and capable of automated learning.
 %
-In particular, in this paper we propose a logic API for supervised machine learning, enabling logic programmers to exploit neural networks -- among the others -- in their programs.
+In particular, we propose a logic API for supervised machine learning, enabling logic programmers to exploit neural networks -- among the others -- in their programs.
 %
 Accordingly, we discuss the design and architecture of a library reifying APIs for the Prolog language in the \twopkt{} logic ecosystem.
 %
@@ -70,7 +70,7 @@ Finally, we discuss a number of snippets aimed at exemplifying the major benefit
 \label{sec:introduction}
 %---------------------------------------------------------------------------------------
 
-Symbolic and sub-symbolic artificial intelligence (AI) are complementary under a number of perspectives \cite{ilkou2020symbolic,xaisurvey-ia14}.
+Symbolic and sub-symbolic artificial intelligence (AI) are complementary under several perspectives \cite{ilkou2020symbolic,xaisurvey-ia14}.
 %
 %The same is true for their major techniques, namely logic programming (LP) and neural networks (NN).
 %
@@ -99,10 +99,7 @@ In other words, our API lets logic programmers use neural networks in their prog
 %
 Of course, to make this possible, our API supports the whole gamma of low level tasks that are commonly involved in an ML workflow---including, but not limited to, data preprocessing, cross-validation, etc.
 
-%RC: qui sotto metterei giusto una coppia di frasi che riassumono la tech usata, con i riferimenti
 Technically, we prototype our API via a logic library -- namely, the \mllib{} -- targetting the \twopkt{} ecosystem \cite{2p-kt}, and the JVM platform.
-%
-%It consists of a number of primitives bridging the logic realm with some underlying machine-learning library, allowing Prolog to manipulate sub-symbolic facilities such as datasets, neurons, layers, or activation functions, and vice versa.
 %
 \deeplearningforj{} \cite{DL4J} is the underlying library we leverage upon in this paper.
 %
