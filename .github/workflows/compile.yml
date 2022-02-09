@@ -29,23 +29,29 @@ jobs:
       - name: Get Time
         id: current-time
         run: echo "::set-output name=time::$(date +'%Y-%m-%dT%H%M%S')"
-        
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: '${{ steps.bump-version.outputs.new_tag }}-${{ steps.current-time.outputs.time }}'
-          
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.LATEX_ROOT }}.pdf
-          asset_name: ${{ env.LATEX_ROOT }}-${{ steps.bump-version.outputs.new_tag }}-${{ steps.current-time.outputs.time }}.pdf
-          asset_content_type: application/pdf
 
+      - name: Install PDFtk
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y pdftk
+
+      - name: Split PDF file
+        env:
+          RELEASE_TAG: ${{ steps.bump-version.outputs.new_tag }}-${{ steps.current-time.outputs.time }}
+        run: |
+          pdftk F=$LATEX_ROOT.pdf cat F1-10 output paper-$RELEASE_TAG.pdf
+          pdftk F=$LATEX_ROOT.pdf cat F11-end output supplementary-$RELEASE_TAG.pdf
+        
+      - name: Release Assets
+        id: upload-release-asset
+        env:
+          RELEASE_TAG: ${{ steps.bump-version.outputs.new_tag }}-${{ steps.current-time.outputs.time }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -x
+          ASSETS=()
+          for A in *.pdf; do
+            ASSETS+=("-a" "$A")
+            echo "Releasing $A"
+          done
+          hub release create "${ASSETS[@]}" -m "$RELEASE_TAG" "$RELEASE_TAG"
