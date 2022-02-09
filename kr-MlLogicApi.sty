@@ -34,7 +34,7 @@
 \newcommand{\emptyparagraph}{\oldparagraph*{}}
 
 \let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1.}}
+\renewcommand{\subparagraph}[1]{\textbf{#1.}}
 \newcommand{\emptysubparagraph}{\oldsubparagraph*{}}
 
 % \usepackage[disable]{todonotes}
@@ -70,6 +70,7 @@
 	extendedchars=true,
 	frame=trBL,
 	frameround=fttt,
+    escapeinside={(*@}{@*)},
 }
 
 \usepackage{prolog-style}

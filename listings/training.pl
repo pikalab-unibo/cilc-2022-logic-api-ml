@@ -35,5 +35,5 @@ model_selection(Dataset, Schema, Predictor, Transform, Performance) :-
   test(NN, ProcessedTestSet, Performance).
 
 /* Example of training query: */
-?- iris_dataset(D), iris_schema(S), 
+?- iris_dataset(D), iris_schema(S), (*@\label{line:training-query}@*)
     model_selection(D, S, P, _, A).
