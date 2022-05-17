@@ -1,14 +1,7 @@
 % !TeX spellcheck = en_GB
-\documentclass{article}
-\pdfpagewidth=8.5in
-\pdfpageheight=11in
+\documentclass[runningheads]{llncs}
 
-\usepackage{kr}
 \usepackage{kr-MlLogicApi}
-
-\pdfinfo{
-/TemplateVersion (KR.2022.0)
-}
 
 %\title{Towards a Logic Programming library for Machine Learning: API design and prototyping}
 \title{
@@ -18,22 +11,22 @@
 }
 
 \author{%
-    Giovanni Ciatto
+    Giovanni Ciatto\inst{1}\orcidID{0000-0002-1841-8996}
     \and
-    Matteo Castigliò
+    Matteo Castigliò\inst{3}
     \and
-    Roberta Calegari
+    Roberta Calegari\inst{2}\orcidID{0000-0003-3794-2942}
+}
+\institute{
+    Departement of Computer Science and Engineering (DISI) 
+    \and
+    Alma Mater Research Institute for Human Centered AI (AlmaAI)
     \\
-    \affiliations
-    $^1$Departement of Computer Science and Engineering (DISI) %, Alma Mater Studiorum---Università di Bologna
+    Alma Mater Studiorum---Università di Bologna
     \\
-    $^3$Alma Mater Research Institute for Human Centered AI (AlmaAI)
-    \\
-    $^{1,3}$Alma Mater Studiorum---Università di Bologna
-    \\
-    \emails\ttfamily
-    $^{1,3}$\{giovanni.ciatto, roberta.calegari\}@unibo.it,
-    $^{2}$matteo.castiglio@studio.unibo.it
+    \email{\{giovanni.ciatto, roberta.calegari\}@unibo.it}
+    \and
+    \email{matteo.castiglio@studio.unibo.it}
 }
 
 \begin{document}
@@ -157,7 +150,7 @@ Consequently, logic programs should be endowed with ad-hoc predicates and syntac
 
 \paragraph{Declarative ML} Declarative ML is a paradigm by which data scientists' code should only specify \emph{what} an ML workflow should do, by leaving the underlying platform in charge to understand \emph{how}.
 %
-This is partially supported by the current practice of data science which relies on high-level languages (e.g. Python) and libraries of elementary components to be composed (e.g. Scikit-Learn by \citeay{scikit-learn}).
+This is partially supported by the current practice of data science which relies on high-level languages (e.g. Python) and libraries of elementary components to be composed (e.g. Scikit-Learn \cite{scikit-learn}).
 %
 However, the solutions proposed so far do not leverage inherently declarative frameworks like LP, but rather object-oriented languages---requiring imperative statements.
 %
@@ -695,7 +688,7 @@ The second thread concerns the extensions of the \mllib{}, which should be event
 
 %% The file kr.bst is a bibliography style file for BibTeX 0.99c
 %\nocite{*}
-\bibliographystyle{kr}
+\bibliographystyle{splncs04}
 \bibliography{bibliography}
 
 \newpage
