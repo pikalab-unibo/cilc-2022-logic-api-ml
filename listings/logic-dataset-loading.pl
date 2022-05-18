@@ -10,5 +10,4 @@ iris(5.9, 3.4, 1.1, 0.9, virginica).
 iris_schema(S) :- theory_to_schema(S).
 
 % reading dataset from theory            
-iris_dataset(D) :- 
-    iris_schema(S), theory_to_dataset(S, D).
+iris_dataset(D) :- iris_schema(S), theory_to_dataset(S, D).

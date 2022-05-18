@@ -2,6 +2,7 @@
 \documentclass[runningheads]{llncs}
 
 \usepackage{cilc-2022-logic-api-ml}
+\usepackage{lscape}
 
 %\title{Towards a Logic Programming library for Machine Learning: API design and prototyping}
 \title{
@@ -18,7 +19,7 @@
     Roberta Calegari\inst{2}\orcidID{0000-0003-3794-2942}
 }
 \institute{
-    Departement of Computer Science and Engineering (DISI) 
+    Departement of Computer Science and Engineering (DISI)
     \and
     Alma Mater Research Institute for Human Centered AI (AlmaAI)
     \\
@@ -328,26 +329,26 @@ Here we elicit the many activities involved in each phase of any ML workflow, an
 We start our discussion by identifying the five major sorts of entities each activity may manipulate.
 %
 \begin{itemize}
-	\item \emph{Value:} a scalar, vectorial, matrix, or tensorial datum from a given domain (e.g. integer or real numbers, or vectors of integer or real numbers, as well as a string, a table, a time series, etc.).
-	%
-	\item \emph{Schema:} a concise and formal description of a domain (i.e. a set of values).
-	%
-	For scalar values, schemas are essentially data types (e.g. integers, reals, strings, etc.), while for non-scalar data they carry information about the name, index, and type of each single scalar component.
-	%
-	\item \emph{Dataset:} a collection of values matching a particular schema (supposed to be known).
-	%
-	\item \emph{Transformation:} any operation aimed at transforming an entity dataset into another other---commonly, a dataset into either another dataset (e.g. normalization, standardization, etc.) or a value (e.g. max, min, average, etc.)
-	%
-	From an algebraic perspective, it is a function.
-	%
-	From a computational perspective, it is an algorithm.
-	%
-	\item \emph{Predictor:} a stateful computational entity capable of
-	%
-	\begin{inlinelist}
-		\item drawing predictions (i.e. outputting values) out of (possibly unseen) input values, according to its internal state
-		\item updating its internal state according to a dataset (to improve future predictions)
-	\end{inlinelist}
+    \item \emph{Value:} a scalar, vectorial, matrix, or tensorial datum from a given domain (e.g. integer or real numbers, or vectors of integer or real numbers, as well as a string, a table, a time series, etc.).
+    %
+    \item \emph{Schema:} a concise and formal description of a domain (i.e. a set of values).
+    %
+    For scalar values, schemas are essentially data types (e.g. integers, reals, strings, etc.), while for non-scalar data they carry information about the name, index, and type of each single scalar component.
+    %
+    \item \emph{Dataset:} a collection of values matching a particular schema (supposed to be known).
+    %
+    \item \emph{Transformation:} any operation aimed at transforming an entity dataset into another other---commonly, a dataset into either another dataset (e.g. normalization, standardization, etc.) or a value (e.g. max, min, average, etc.)
+    %
+    From an algebraic perspective, it is a function.
+    %
+    From a computational perspective, it is an algorithm.
+    %
+    \item \emph{Predictor:} a stateful computational entity capable of
+    %
+    \begin{inlinelist}
+        \item drawing predictions (i.e. outputting values) out of (possibly unseen) input values, according to its internal state
+        \item updating its internal state according to a dataset (to improve future predictions)
+    \end{inlinelist}
 \end{itemize}
 %
 Any logic-based API for ML should support the representation, combination, and manipulation of entities of these kinds.
@@ -361,6 +362,8 @@ A logic-based API for ML should support them as well.
 Accordingly, in the remainder of this section, we describe such activities along with the entities they operate upon.
 %
 In doing so, we partition activities w.r.t. the ML phase they are most commonly exploited into.
+
+% \begin{description}
 
 \subparagraph{Dataset loading}
 %
@@ -426,13 +429,15 @@ This is yet another meta-activity, with several possible variants depending on t
     \item \emph{Predictor scoring:} operation of computing a scoring value out of a trained predictor, a test dataset, and a scoring function
 \end{itemize}
 
+% \end{description}
+
 %----------------------------------------------------------------------------------------
 \section{\mllib{} Overview and Architecture}
 %----------------------------------------------------------------------------------------
 
-\begin{figure}
+\begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{figures/layers.pdf}
+    \includegraphics[width=.5\linewidth]{figures/layers.pdf}
     \caption{Layered view of the proposed \mllib{}. An OO library is assumed behind the scenes, providing high-level abstraction to optimize ML predictors, possibly via HW acceleration.}
     \label{fig:layers}
 \end{figure}
@@ -465,12 +470,16 @@ Details about the predicates are provided in the supplementary material.
 %
 \Cref{fig:design-overview} provides an overview of these predicates, grouped by entities.
 
-\begin{figure*}
-    \centering
-    \includegraphics[width=\linewidth]{figures/entities.pdf}
-    \caption{Overview of our \mllib{} design. The chart represents the many entities logic programmers may exploit via our \mllib{}, and the many predicates supporting their creation, manipulation, or representation. Predicates are depicted with either a yellow diamond in case they are non-deterministic (a.k.a. backtrackable), or a green circle otherwise.}
-    \label{fig:design-overview}
-\end{figure*}
+%\begin{landscape}
+%    \centering
+%    \thispagestyle{empty}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth]{figures/entities.pdf}
+        \caption{Overview of our \mllib{} design. The chart represents the many entities logic programmers may exploit via our \mllib{}, and the many predicates supporting their creation, manipulation, or representation. Predicates are depicted with either a yellow diamond in case they are non-deterministic (a.k.a. backtrackable), or a green circle otherwise.}
+        \label{fig:design-overview}
+    \end{figure}
+%\end{landscape}
 
 %----------------------------------------------------------------------------------------
 \section{\mllib{} Examples}
@@ -497,17 +506,20 @@ The \mllib{} supports declarative ML in several ways, as exemplified by listings
 
 %\begin{figure}
     \prologimport[
+        float,
 %        captionpos=b,
         label={lst:dataset-loading},
         caption={Dataset loading from file}
     ]{listings/dataset-loading.pl}
     %
     \prologimport[
+        float,
         label={lst:pre-processing-pipeline},
         caption={Pre-processing pipeline}
     ]{listings/pre-processing-pipeline.pl}
     %
     \prologimport[
+        float,
         label={lst:neural-network-declare},
         caption={Neural network structure declaration}
     ]{listings/neural-network-declare.pl}
@@ -570,7 +582,7 @@ The script is assumed to replace \cref{lst:logic-dataset-loading} in those situa
 Here, the \pl{iris\_dataset/1} attempts to load the data from the local theory instead of a file.
 
 \prologimport[
-%    float,
+    float,
     label={lst:logic-dataset-loading},
     caption={Dataset loading from the local theory}
 ]{listings/logic-dataset-loading.pl}
@@ -586,13 +598,12 @@ Accordingly, the \mllib{} supports expressing and performing model selection in 
 %
 %\medskip
 \prologimport[
-%    float,
+    float,
 %    captionpos=b,
-    linewidth=1.07\linewidth,
+%    linewidth=1.07\linewidth,
     label={lst:training},
     caption={[Declarative description of a ML workflow]Declarative description of a ML workflow aimed at selecting the best hyper and learning parameters for a NN classifier. Ancillary predicates invoked in this snippet are reported in the supplementary material.}
 ]{listings/training.pl}
-\bigskip
 %
 There hyper, learning, and workflow parameters are expressed as logic facts, and the \pl{params/2} predicate is defined to enumerate all possible combinations of theirs---e.g. via Prolog's backtracking mechanism.
 %
@@ -934,7 +945,7 @@ Within the scope of the \mllib{}, we support partitioning a dataset in several w
 Conversions from and into clausal form complete the picture.
 
 \subparagraph{Splitting}
-
+%
 To support test set separation, the \mllib{} provides a predicate to randomly split a dataset into a training and test set, given a ratio:
 %
 \begin{lp}
@@ -994,7 +1005,7 @@ In particular, it allows the user to access the \pl{Value} in position $(\pl{Ind
 If one or both parameters are uninstantiated, the predicate enumerates all possible assignments.
 
 \subparagraph{Object to clausal form conversion}
-
+%
 The logic programmer may also be willing to convert a dataset in object form into a dataset in clausal form.
 %
 This can be attained via the following predicate:
@@ -1101,7 +1112,7 @@ Here we focus on the overall design which is aimed at supporting the declaration
 Following this convention, logic programmers may declaratively construct the pipeline of transformations to be applied to \pl{OriginalSchema} to produce \pl{FinalSchema}, in such a way that each variable \pl{T$_i$}, for $i \in \{0, \ldots, m\}$ is bound to an object summarising all transformation steps from $0$ to $i$.
 
 \subparagraph{Normalization}
-
+%
 A dataset's columns can be normalised in such a way that, for each column, the mean is 0 and the standard deviation is 1.
 %
 Such kind of transformations may alter the dataset while leaving its schema unaffected.
@@ -1115,7 +1126,7 @@ A normalization transformation can be created via the following predicate:
 There, parameter \pl{Attributes} must be bound to either a list of attribute names or indexes -- denoting the columns to be normalized --, or the `\pl{all}' atom---denoting a situation where all columns should be normalized.
 
 \subparagraph{One Hot Encoding}
-
+%
 A dataset's target attributes whose type are categorical with $k$-admissible values can be replaced by $k$ binary attributes, via one-hot encoding (OHE) transformations.
 %
 Such kind of transformations alter both the dataset and its schema.
@@ -1129,7 +1140,7 @@ A OHE transformation can be created via the following predicate:
 There, parameter \pl{Attributes} must be bound to a list of attribute names or indexes denoting the columns to be one-hot encoded.
 
 \subparagraph{Attributes Deletion}
-
+%
 Columns may be dropped from a dataset and its schema via attribute deletion transformations.
 %
 Such kind of transformations alter both the dataset and its schema.
@@ -1406,7 +1417,7 @@ Admissible activation functions are regulated by the \pl{activation/1} predicate
 \begin{lp}
     \begin{tabular}{l}
         \pl{activation(\pli{identity}).}
-        	\quad {\normalfont denoting} $f(x) = x$
+            \quad {\normalfont denoting} $f(x) = x$
         \\
         \pl{activation(\pli{sigmoid}).}
             \quad {\normalfont denoting} $f(x) = 1/(1+e^{-x})$
@@ -1434,9 +1445,8 @@ Every single fold of a \pl{K}-fold CV process is managed by the \pl{train\_cv\_f
 %
 Finally, the \pl{test/3} predicate can be exploited to either test or validate a predictor depending on whether the test or validation set is provided as an argument.
 
-\pagebreak
-
 \prologimport[
+    float,
     label={lst:training-ancillary},
     caption={[Ancillary predicates used in \cref{lst:training}]Ancillary predicates used in \cref{lst:training}. Each predicate denotes one particular step of a model selection workflow}
 ]{listings/training-ancillary.pl}
