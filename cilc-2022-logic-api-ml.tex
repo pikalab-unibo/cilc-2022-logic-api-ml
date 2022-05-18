@@ -66,8 +66,6 @@ Finally, we discuss a number of snippets aimed at exemplifying the major benefit
 
 Symbolic and sub-symbolic artificial intelligence (AI) are complementary under several perspectives \cite{ilkou2020symbolic,xaisurvey-ia14}.
 %
-%The same is true for their major techniques, namely logic programming (LP) and neural networks (NN).
-%
 For this reason, many recent contributions from the literature are discussing the possible frameworks for their integration and hybridisation \cite{BarredoArrieta2020,Goertzel2012,lpaas-bdcc2,xailp-woa2019}.
 %
 However, what is currently slowing down scientific progress in this context is not the lack of ideas concerning \emph{how} such integration and hybridisation may occur.
@@ -95,7 +93,7 @@ Of course, to make this possible, our API supports the whole gamma of low level 
 
 Technically, we prototype our API via a logic library -- namely, the \mllib{} -- targetting the \twopkt{} ecosystem \cite{2p-kt}, and the JVM platform.
 %
-\deeplearningforj{} \cite{DL4J} is the underlying library we leverage upon in this paper.
+\deeplearningforj{} \cite{DL4J} is the underlying library we leverage on in this paper.
 %
 However, our design is general enough to support other libraries and, possibly, different platforms---e.g. Tensorflow \cite{tensorflow2015-whitepaper} over Python.
 
@@ -105,7 +103,7 @@ In fact, one the long run, we aim to enable the design and construction of hybri
 %
 Along this path, the proposed API is a key enabling factor, as it supports the creation of logic-based inferential engines which are capable of learning from data via state-of-the-art mechanisms.
 %
-Dually, by supporting the training of neural networks from logic data, our API can also be considered as a tool for endowing sub-symbolic predictors with prior, high-level knowledge.
+Dually, by supporting the training of neural networks from logic data, our API can also be considered a tool for endowing sub-symbolic predictors with prior, high-level knowledge.
 
 %Accordingly, the reminder of this paper is organised as follows.
 %%
@@ -194,28 +192,28 @@ Hence it is well suited to both declaratively represent and implement model sele
 
 To support the aforementioned goals, logic APIs must cover the full gamma of aspects involved in any possible ML workflow, detailed and discussed in this section.
 
-Briefly speaking, a ML workflow is the process of producing a suitable predictor for the available data and the learning task at hand, following the purpose of later exploiting that predictor to draw analyses or to drive decisions.
-%%
+Briefly speaking, an ML workflow is the process of producing a suitable predictor for the available data and the learning task at hand, following the purpose of later exploiting that predictor to draw analyses or to drive decisions.
+%
 %Hence, any ML workflow is commonly described as composed by two major phases, namely training -- where predictors are fit on data -- and inference---where predictors are exploited.
 %%
 %However, in practice, further phases are included, such as data provisioning and preprocessing, as well as model selection and assessment.
 %%
 %
-Each ML workflow can be conceived as composed by six major phases -- elicited in \cref{ssec:ml-phases} --, each one involving a number of activities---elicited in \cref{ssec:modelling}.
+Each ML workflow can be conceived as composed of six major phases -- elicited in \cref{ssec:ml-phases} --, each one involving a number of activities---elicited in \cref{ssec:modelling}.
 %
 Enumerating and defining all possible phases and activities is of paramount importance, as any API for ML should support them all.
 
 \subsection{ML phases}
 \label{ssec:ml-phases}
 
-From a coarse-grained perspective, a machine learning workflow is composed by six major phases, detailed in the following.
+From a coarse-grained perspective, a machine learning workflow is composed of six major phases, detailed in the following.
 
 \paragraph{Dataset loading}
 %
 %Provided that the data provisioning phase has resulted in a dataset -- roughly, a collection of homogenous data, often coming in the form of a single file, a folder or a database --,
 The first step of any ML workflow consists of loading that dataset in memory for later processing.
 %
-To support such a step, ML frameworks come with ad-hoc functionalities aimed at loading the dataset by reading a file from the local file system, by fetching it from the Web, or by querying a DBMS.
+To support such a step, ML frameworks come with ad-hoc functionalities aimed at loading the dataset by reading a file from the local file system, fetching it from the Web, or querying a DBMS.
 %
 These usually come in the form of either classes or functions, coherently w.r.t. the object-oriented nature of mainstream ML frameworks.
 %
@@ -229,7 +227,7 @@ Raw datasets are often inadequate to favour predictors' training.
 %
 Hence, dataset pre-processing is commonly practised to increase the effectiveness of any subsequent training phase.
 %
-Pre-processing most common bulk operations are:
+Most common bulk operations of pre-processing are:
 %
 \begin{inlinelist}
     \item homogenize the variation ranges of the many features sampled by the dataset,
@@ -303,7 +301,7 @@ Finally, it should be possible to store, retrieve, and re-apply any pre-processi
 
 \paragraph{Validation}
 %
-Validation is the \emph{penultimate} step of any ML workflow: it succeeds training and precedes exploitation.
+Validation is the \emph{penultimate} step of any ML workflow: it follows the training and precedes the exploitation.
 %
 It is here discussed as last because it technically relies on the capability of drawing predictions via trained predictors---which is treated in the paragraph above.
 
@@ -322,7 +320,7 @@ Hence, to support validation, the logic API for ML should provide predicates to 
 \label{ssec:modelling}
 %----------------------------------------------------------------------------------------
 
-Here we elicit the many activities involved in each phase of any ML workflow, and we describe them from a computational perspective---i.e. in terms of the sorts entities (a.k.a. data types) they accept as input or produce as output (manipulate, for short).
+Here we elicit the many activities involved in each phase of any ML workflow, and we describe them from a computational perspective---i.e. in terms of the sorts of entities (a.k.a. data types) they accept as input or produce as output (manipulate, for short).
 
 \paragraph{Entities}
 
@@ -378,7 +376,7 @@ The main activities to support the loading of a dataset into a solver's memory, 
 
 \subparagraph{Dataset pre-processing}
 %
-Here, they may be willing to define transformations or cascades of transformations (pipelines, henceforth) to be eventually applied on datasets:
+Here, they may be willing to define transformations or cascades of transformations (pipelines, henceforth) to be eventually applied to datasets:
 %
 \begin{itemize}
     \item \emph{Transformation declaration:} operation of declaratively encoding a transformation operation to be applied to all data in a dataset
@@ -547,7 +545,7 @@ The resulting \pl{Pipeline} is then fitted against the provided \pl{Dataset}, an
 
 In turn, \cref{lst:neural-network-declare} presents a general purpose predicate aimed at defining multi-layered perceptron predictors with an arbitrary amount of hidden layers.
 %
-This is made possible by the \pl{multi\_layer\_perceptron/4} predicate, which requires the caller to provide the number of neurons to be instantiated for
+This is enabled by the \pl{multi\_layer\_perceptron/4} predicate, which requires the caller to provide the number of neurons to be instantiated for
 %
 \begin{inlinelist}
     \item the input layer (\pl{Nin}),
@@ -621,7 +619,7 @@ The predicate \pl{model\_selection/5} works by
     \item training each corresponding predictor, via 10-fold cross validation (CV), and computing its average validation-test performance (\pl{P})
     \item skipping each hyper and learning parameters combination such that the average performance \pl{P} is lower than the target performance \pl{T}
     \item re-training a full-fledged MLP on the whole \pl{TrainingSet}, for each parameters combination such that \pl{P >= T}
-    \item testing that MLP against the \pl{ProcessedTestSet} -- attained by applying the aforementioned \pl{Transformation} to the \pl{TestSet} as well --, thus computing the MLP actual \pl{Performance}
+    \item testing that MLP against the \pl{ProcessedTestSet} -- obtained by applying \pl{Transformation} to the \pl{TestSet} --, thus computing the MLP actual \pl{Performance}
 \end{enumerate}
 %
 In other words, the \pl{model\_selection/5} represents a declarative, and pretty general, workflow for model selection---which may be adapted to other supervised learning tasks with minimal changes.
@@ -671,7 +669,7 @@ In this paper, we propose a logic API supporting the seamless integration of log
 %
 Stemming from a domain analysis aimed at identifying the major computational entities involved in a supervised ML workflow, we design our API in terms of computational entities and the operations/functionalities they should support.
 %
-We then reify our API into a set of logic predicates composing the \mllib{}---i.e., an abstract logic library which any goal-oriented solver may support, there including Prolog ones.
+We then reify our API into a set of logic predicates composing the \mllib{}---i.e., an abstract logic library that any goal-oriented solver may support, there including Prolog ones.
 %
 Both the syntax and the semantics of each predicate are discussed, as well as architectural and technological requirements.
 %
@@ -691,7 +689,7 @@ In fact, thanks to our \mllib{}, trained sub-symbolic predictors may be used in 
 
 In the future, we expect contributions to stem from our \mllib{} along two different research threads.
 %
-The first thread concerns the exploitation of the \mllib{} to create hybrid systems, where LP and ML are integrated in manifold ways.
+The first thread concerns the exploitation of the \mllib{} to create hybrid systems, where LP and ML are integrated into manifold ways.
 %
 This is made possible by our logic API for ML, which reduces the abstraction gap among LP and ML, as well as the \mllib, which lowers the technological barriers preventing the integration of symbolic and sub-symbolic AI.
 %
