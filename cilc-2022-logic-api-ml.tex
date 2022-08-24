@@ -1,66 +1,64 @@
 % !TeX spellcheck = en_GB
-\documentclass[runningheads]{llncs}
+\documentclass[
+% twocolumn,
+% hf,
+]{ceurart}
+
+%%
+%% One can fix some overfulls
+\sloppy
 
 \usepackage{cilc-2022-logic-api-ml}
 \usepackage{lscape}
 
-%\title{Towards a Logic Programming library for Machine Learning: API design and prototyping}
-\title{
-    Logic Programming library for Machine Learning:
-    \\
-    API design and prototype
-    \thanks{Copyright \copyright{} 2022 for this paper by its authors. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).}
-}
-
-\author{%
-    Giovanni Ciatto\inst{1}\orcidID{0000-0002-1841-8996}
-    \and
-    Matteo Castigliò\inst{3}
-    \and
-    Roberta Calegari\inst{2}\orcidID{0000-0003-3794-2942}
-}
-\institute{
-    Departement of Computer Science and Engineering (DISI)
-    \and
-    Alma Mater Research Institute for Human Centered AI (AlmaAI)
-    \\
-    Alma Mater Studiorum---Università di Bologna
-    \\
-    \email{\{giovanni.ciatto, roberta.calegari\}@unibo.it}
-    \and
-    \email{matteo.castiglio@studio.unibo.it}
-}
-
 \begin{document}
 
-\maketitle
+%%
+%% Rights management information.
+%% CC-BY is default license.
+\copyrightyear{2022}
+\copyrightclause{Copyright for this paper by its authors.
+    Use permitted under Creative Commons License Attribution 4.0
+    International (CC BY 4.0).}
+
+%%
+%% This command is for the conference information
+\conference{CILC 2022: 37th Italian Conference on Computational Logic, June 29 -- July 1, 2022, Bologna, Italy}
+
+%\title{Towards a Logic Programming library for Machine Learning: API design and prototyping}
+\title{%
+    Logic Programming library for Machine Learning: API design and prototype
+}
+
+\author[1]{Giovanni Ciatto}[orcid=0000-0002-1841-8996,email=giovanni.citatto@unibo.it,url=https://about.me/gciatto]
+\author[3]{Matteo Castigliò}[email=matteo.castiglio@studio.unibo.it]
+\author[2]{Roberta Calegari}[orcid=0000-0003-3794-2942,email=roberta.calegari@unibo.it,url=http://robertacalegari.apice.unibo.it]
+
+\address[1]{Departement of Computer Science and Engineering (DISI), Alma Mater Studiorum---Università di Bologna}
+\address[2]{Alma Mater Research Institute for Human Centered AI (AlmaAI), Alma Mater Studiorum---Università di Bologna}
+\address[3]{Master Student at DISI}
+
+%% Footnotes
+\cortext[1]{Corresponding author.}
 
 \begin{abstract}
-%Deductive inference is amongst the most prominent features for making a system intelligent.
-%%
-%Logic programming enables the representation and automatic manipulation of reasoning, via sequences of implications.
-%%
-%While this approach supports the creation of inherently-comprehensible systems (for the human mind), it may result inadequate to tackle complex or large corpi of knowledge.
-%%
-%Conversely, modern artificial neural networks support the automatic provisioning of knowledge from experience, via machine learning.
-%%
-%The latter approach is highly scalable, as it does not require logic knowledge to be handcrafted by humans.
-%%
-%Unfortunately, however, it leads to poorly interpretable systems and it requires large amounts of data to be available.
-%%
-%The two approaches are thus complementary.
-
 In this paper we address the problem of hybridising symbolic and sub-symbolic approaches in artificial intelligence, following the purpose of creating flexible and data-driven systems, which are simultaneously comprehensible and capable of automated learning.
 %
 In particular, we propose a logic API for supervised machine learning, enabling logic programmers to exploit neural networks -- among the others -- in their programs.
 %
-Accordingly, we discuss the design and architecture of a library reifying APIs for the Prolog language in the \twopkt{} logic ecosystem.
+Accordingly, we discuss the design and architecture of a library reifying APIs for the Prolog language in the 2P-Kt logic ecosystem.
 %
 Finally, we discuss a number of snippets aimed at exemplifying the major benefits of our approach when designing hybrid systems.
-
-\keywords{Logic programming  \and Machine Learning \and API \and \twopkt{}.}
-
 \end{abstract}
+
+\begin{keywords}
+    Logic programming \sep
+    Machine Learning \sep
+    API \sep
+    2P-Kt
+\end{keywords}
+
+\maketitle
 
 %----------------------------------------------------------------------------------------
 \section{Introduction}
@@ -700,16 +698,12 @@ The second thread concerns the extensions of the \mllib{}, which should be event
 
 \section*{Acknowledgments}
 This paper has been partially supported by
-	%
-	\begin{inlinelist}
-		\item the European Union's Horizon 2020 research and innovation programme under G.A.\ no.\ 101017142 (StairwAI project), and by
-		\item the CHIST-ERA IV project CHIST-ERA-19-XAI-005, co-funded by the EU and the Italian MUR (Ministry for University and Research).
-	\end{inlinelist}
+%
+\begin{inlinelist}
+    \item the European Union's Horizon 2020 research and innovation programme under G.A.\ no.\ 101017142 (StairwAI project), and by
+    \item the CHIST-ERA IV project CHIST-ERA-19-XAI-005, co-funded by the EU and the Italian MUR (Ministry for University and Research).
+\end{inlinelist}
 
-
-%% The file kr.bst is a bibliography style file for BibTeX 0.99c
-%\nocite{*}
-\bibliographystyle{splncs04}
 \bibliography{cilc-2022-logic-api-ml}
 
 \newpage
