@@ -19,6 +19,7 @@ cilc-2022-logic-api-ml.pdf
 *.cb2
 .*.lb
 *.xmp*
+*.abs
 
 ## Intermediate documents:
 *.dvi

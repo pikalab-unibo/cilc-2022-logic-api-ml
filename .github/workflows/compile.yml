@@ -32,8 +32,8 @@ jobs:
         env:
           RELEASE_TAG: ${{ steps.current-time.outputs.time }}
         run: |
-          pdftk F=$LATEX_ROOT.pdf cat F1-13 output paper-$RELEASE_TAG.pdf
-          pdftk F=$LATEX_ROOT.pdf cat F14-end output supplementary-$RELEASE_TAG.pdf
+          pdftk F=$LATEX_ROOT.pdf cat F1-15 output paper-$RELEASE_TAG.pdf
+          pdftk F=$LATEX_ROOT.pdf cat F16-end output supplementary-$RELEASE_TAG.pdf
         
       - name: Release Assets
         id: upload-release-asset
